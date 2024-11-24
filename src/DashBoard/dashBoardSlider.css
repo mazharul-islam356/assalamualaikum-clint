@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
 
 :root{
  
-  --color-second:#d5a222c5;
+  --color-second:#000000c5;
   --color-white:#fff;
   --color-body:#e4e9f7;
   --color-light:#e0e0e0;
@@ -13,7 +13,7 @@
   padding: 0%;
   margin: 0%;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  
 }
 
 body{
@@ -49,7 +49,7 @@ display: none;
   width: 78px;
   padding: 6px 14px;
   z-index: 99;
-  background-image: linear-gradient(to right, #ffba08, #f29b06 70%, #ffba08);
+  background-image: linear-gradient(to right, #08b1ff, #0ca6e2 70%, #08b1ff);
   transition: all .5s ease;
   position: fixed;
   top:0;
@@ -206,7 +206,7 @@ display: none;
 .sidebar li a:hover .link_name,
 .sidebar li a:hover i{
   transition: all 0.5s ease;
-  color:#a87903
+  color:#474747
 }
 
 .sidebar.open li a .link_name{

@@ -1,3 +1,12 @@
+@import url('https://fonts.maateen.me/adorsho-lipi/font.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+*{
+    font-family: 'AdorshoLipi', sans-serif;
+}
+.font-bangla{
+    font-family: 'AdorshoLipi', sans-serif;
+}

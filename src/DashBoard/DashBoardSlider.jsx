@@ -81,135 +81,69 @@ const DashBoardSlider = () => {
 
     return (
         <div>
-      <div className={`sidebar  ${isOpen ? "open" : "closee"}`}>
+      <div className={`sidebar font-bangla  ${isOpen ? "open" : "closee"}`}>
         <div className="logo_details">
-          <div className="logo_name">Nomivista</div>
+          <div className="logo_name">Salamualaikum</div>
           <i className="bx bx-menu" id="btn"></i>
         </div>
         <ul className="nav-list">
           <li className="cursor-pointer">
-            <Accordion open={alwaysOpen}>
-              <AccordionHeader
-                className="border-none p-0 "
-                onClick={handleAlwaysOpen}
-              >
+                     
+             
                 <Link
-                  to="adminDashBoard"
+                  to="#"
                   className="transition ease-in-out a"
                   onClick={handleDashBoardSliderOpen}
                 >
                   <i className="bx bx-grid-alt"></i>
-                  <span className="link_name">Dashboard</span>
-                  <i className="bx link_name bx-chevron-down ml-4"></i>
-                  <span className="tooltip">Dashboard</span>
+                  <span className="link_name">ড্যাশবোর্ড</span>
+                 
+                  <span className="tooltip">ড্যাশবোর্ড</span>
                 </Link>
-              </AccordionHeader>
-              <Link  onClick={() => handlePageClick('admin')}
-          style={{
-            color: activePage === 'admin' ? 'red' : 'black',
-          }}  to="adminDashBoard">
-                <AccordionBody className="ml-10 text-sm flex mt-1 items-center gap-1 p-0 sub-catagory  hover:opacity-70 transition">
-                  <MdAdminPanelSettings className="text-md"></MdAdminPanelSettings>
-                  <p>Admin Dashboard</p>
-                </AccordionBody>
-              </Link>
-
-              <Link onClick={() => handlePageClick('employee')}
-          style={{
-            color: activePage === 'employee' ? 'red' : 'black',
-          }}  to="employeeDashBoard">
-                <AccordionBody className="ml-10 text-white hover:opacity-70 transition mt-2 text-sm flex items-center gap-1 p-0 sub-catagory">
-                  <CgProfile className="text-md"></CgProfile>
-                  <p>Employee Dashboard</p>
-                </AccordionBody>
-              </Link>
-            </Accordion>
+                       
           </li>
 
+
+
+          <li>
+            <Link to='daily-calculation' className="a">
+            <i className='bx bx-calculator'></i>
+              <span className="link_name">দৈনিক হিসাব</span>
+            </Link>
+            <span className="tooltip">দৈনিক হিসাব</span>
+          </li>
+
+          
           <li>
             <Link to='employeeProfile' className="a">
             <i className='bx bx-user-circle'></i>
-              <span className="link_name">Profile</span>
+              <span className="link_name">এমপ্লয়ী প্রোফাইল</span>
             </Link>
-            <span className="tooltip">Profile</span>
+            <span className="tooltip">এমপ্লয়ী প্রোফাইল</span>
           </li>
 
-
-          {/* ------02-------- */}
-         <li  onClick={() => handlePageClick('home')}
-          style={{
-            color: activePage === 'home' ? 'blue' : 'black',
-          }} className="cursor-pointer">
-         <Accordion open={alwaysOpen2}>
-            <AccordionHeader
-              className="border-none p-0 "
-              onClick={handleAlwaysOpen2}
-            >
-              <Link
-                to="leaveApplication"
-                className="transition ease-in-out a"
-                onClick={handleLeaveOpen}
-              >
-                <i className='bx bx-calendar-alt'></i>
-                <span className="link_name">Leave</span>
-                <i className="bx link_name bx-chevron-down ml-4"></i>
-                <span className="tooltip">Leave</span>
-              </Link>
-            </AccordionHeader>
-            <Link className="" to="leaveApplication">
-              <AccordionBody className="ml-10 text-sm flex mt-1 items-center gap-1 p-0 sub-catagory text-white hover:opacity-70 transition">
-                <PiReadCvLogoDuotone   className="text-md"></PiReadCvLogoDuotone>
-                <p>Leave application</p>
-              </AccordionBody>
-            </Link>
-
-            <Link to="leaveApplicationList">
-              <AccordionBody className="ml-10 text-white hover:opacity-70 transition mt-2 text-sm flex items-center gap-1 p-0 sub-catagory">
-                <CiViewList  className="text-md"></CiViewList>
-                <p>Leave application list</p>
-              </AccordionBody>
-            </Link>
-          </Accordion>
-         </li>
+          
 
           <li>
             <Link className="a">
-              <i className="bx bx-chat"></i>
-              <span className="link_name">Message</span>
+            <i className='bx bx-wallet-alt'></i>
+              <span className="link_name">মাসিক খরচের হিসাব</span>
             </Link>
-            <span className="tooltip">Message</span>
+            <span className="tooltip">মাসিক খরচের হিসাব</span>
           </li>
+
+
 
           <li>
             <Link className="a">
               <i className="bx bx-pie-chart-alt-2"></i>
-              <span className="link_name">Analytics</span>
+              <span className="link_name">হিসাব</span>
             </Link>
-            <span className="tooltip">Analytics</span>
+            <span className="tooltip">হিসাব</span>
           </li>
 
-          <li>
-            <Link className="a">
-              <i className="bx bx-folder"></i>
-              <span className="link_name">File Manager</span>
-            </Link>
-            <span className="tooltip">File Manager</span>
-          </li>
 
-          <li>
-            <Link className="a">
-              <i className="bx bx-cart-alt"></i>
-              <span className="link_name">Order</span>
-            </Link>
-            <span className="tooltip">Order</span>
-          </li>
-          <li>
-            <Link className="a">
-              <i className="bx bx-cog"></i>
-              <span className="link_name">Settings</span>
-            </Link>
-            <span className="tooltip">Settings</span>
-          </li>
+
           <li className="profile">
             <div className="profile_details">
               {/* <img src={profile} alt="profile image" /> */}
@@ -220,6 +154,8 @@ const DashBoardSlider = () => {
             </div>
             <i className="bx bx-log-out" id="log_out"></i>
           </li>
+
+
         </ul>
       </div>
       <section className="home-section">
