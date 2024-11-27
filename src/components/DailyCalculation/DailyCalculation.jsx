@@ -1,5 +1,5 @@
 import { Card, Typography } from "@material-tailwind/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -9,6 +9,7 @@ import {
   Checkbox,
 } from "@material-tailwind/react";
 import { FaPlus } from "react-icons/fa6";
+import axios from "axios";
 
 const TABLE_HEAD = ["তারিখ", "ক্যাশ এ আয়", "কার্ড এ আয়", "ক্যাশ থেকে খরচ", "নাস্তা", "টোটাল", ""];
 
@@ -51,12 +52,30 @@ const DailyCalculation = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const form = e.target
+    const form = e.target;
     const income_cash = form.income_cash.value
     const income_card = form.income_card.value 
     const cash_expenses = form.cash_expenses.value 
     const nasta_coast = form.nasta_coast.value 
 console.log(income_card, income_cash, cash_expenses, nasta_coast);
+     const dailyCalcutaionData = {income_card, income_cash, cash_expenses, nasta_coast}
+     console.log(dailyCalcutaionData);
+
+
+      axios.post('http://localhost:5001/dailyCalcutaion', dailyCalcutaionData)
+      .then(response=>{
+        if(response.data){
+         alert('data submited succesfull')
+        }
+      })
+      .catch(err=>{
+        console.log(err);
+      })
+
+      
+
+
+
   }
 
 

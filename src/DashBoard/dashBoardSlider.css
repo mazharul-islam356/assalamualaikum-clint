@@ -2,7 +2,7 @@
 
 :root{
  
-  --color-second:#000000c5;
+  --color-second:#0dc3fff5;
   --color-white:#fff;
   --color-body:#e4e9f7;
   --color-light:#e0e0e0;
@@ -128,7 +128,7 @@ display: none;
   left:calc(100% + 15px);
   z-index: 3;
   background-color: var(--color-white);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 7px rgb(28, 177, 252);
   padding: 6px 14px;
   font-size: 15px;
   font-weight: 400;
