@@ -10,6 +10,7 @@ import {
 } from "@material-tailwind/react";
 import { FaPlus } from "react-icons/fa6";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const TABLE_HEAD = ["তারিখ", "ক্যাশ এ আয়", "কার্ড এ আয়", "ক্যাশ থেকে খরচ", "নাস্তা", "টোটাল", ""];
 
@@ -54,30 +55,48 @@ const DailyCalculation = () => {
     e.preventDefault()
     const form = e.target;
     const income_cash = form.income_cash.value
+    const income_cash_int = parseInt(income_cash);
     const income_card = form.income_card.value 
+    const income_card_int = parseInt(income_card);
     const cash_expenses = form.cash_expenses.value 
+    const cash_expenses_int = parseInt(cash_expenses);
     const nasta_coast = form.nasta_coast.value 
-console.log(income_card, income_cash, cash_expenses, nasta_coast);
-     const dailyCalcutaionData = {income_card, income_cash, cash_expenses, nasta_coast}
+    const nasta_coast_int = parseInt(nasta_coast); 
+
+console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int);
+     const dailyCalcutaionData = {income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int}
      console.log(dailyCalcutaionData);
 
 
       axios.post('http://localhost:5001/dailyCalcutaion', dailyCalcutaionData)
       .then(response=>{
         if(response.data){
-         alert('data submited succesfull')
+         toast.success('আপনার দৈনিক হিসাব যুক্ত হয়েছে')
         }
       })
       .catch(err=>{
-        console.log(err);
+        toast.error(err);
       })
-
-      
-
-
 
   }
 
+  // get data
+  const [calculationData, setCalculationData] = useState([])
+
+  useEffect(()=>{
+    axios.get('http://localhost:5001/dailyCalcutaion')
+  .then(response=>{
+    if(response.data){
+      
+    setCalculationData(response.data)
+    }
+  })
+  .catch(err=>{
+   console.log(err);
+  })
+
+  },[])
+  console.log(calculationData);
 
   return (
     <div className="w-11/12 mx-auto mt-10 font-bangla">
@@ -113,6 +132,7 @@ console.log(income_card, income_cash, cash_expenses, nasta_coast);
             ক্যাশ থেকে আয়
             </Typography>
             <Input 
+            type="number"
             label="+ ক্যাশ থেকে আয় যুক্ত করুন" size="lg"
             name="income_cash" 
             />
@@ -123,16 +143,19 @@ console.log(income_card, income_cash, cash_expenses, nasta_coast);
             কার্ড থেকে আয়
             </Typography>
             <Input 
+             type="number"
             label="+ কার্ড থেকে আয় যুক্ত করুন" size="lg" 
             name="income_card"
             />
 
             <Typography 
+            
             className="mb-1 mt-4 font-bangla" variant="h6"
             >
             ক্যাশ থেকে ব্যয় 
             </Typography>
             <Input 
+             type="number"
             label="- ক্যাশ থেকে ব্যয় বাদ দিন" size="lg"
             name="cash_expenses"
              />
@@ -143,6 +166,7 @@ console.log(income_card, income_cash, cash_expenses, nasta_coast);
             নাস্তার খরচ
             </Typography>
             <Input 
+             type="number"
             label="- ক্যাশ থেকে নাস্তার খরচ বাদ দিন" size="lg"
             name="nasta_coast"
              />
@@ -184,24 +208,16 @@ console.log(income_card, income_cash, cash_expenses, nasta_coast);
             </tr>
           </thead>
           <tbody>
-            {TABLE_ROWS.map(({ name, job, date }, index) => (
-              <tr key={name} className="even:bg-blue-gray-50/50">
+            {calculationData.map(({ 
+income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int, _id }, index) => (
+              <tr key={_id} className="even:bg-blue-gray-50/50">
                 <td className="p-4">
                   <Typography
                     variant="small"
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {date}
-                  </Typography>
-                </td>
-                <td className="p-4">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {job}
+                    {index + 1}
                   </Typography>
                 </td>
                 <td className="p-4">
@@ -210,7 +226,7 @@ console.log(income_card, income_cash, cash_expenses, nasta_coast);
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {name}
+                    {income_cash_int}
                   </Typography>
                 </td>
                 <td className="p-4">
@@ -219,7 +235,7 @@ console.log(income_card, income_cash, cash_expenses, nasta_coast);
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {date}
+                    {income_card_int}
                   </Typography>
                 </td>
                 <td className="p-4">
@@ -228,20 +244,20 @@ console.log(income_card, income_cash, cash_expenses, nasta_coast);
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {date}
+                    {cash_expenses_int}
                   </Typography>
                 </td>
                 <td className="p-4">
                   <Typography
-                    as="a"
-                    href="#"
                     variant="small"
                     color="blue-gray"
-                    className="font-medium"
+                    className="font-normal"
                   >
-                    2045478
+                    {nasta_coast_int}
                   </Typography>
                 </td>
+               
+                
                 <td className="p-4">
                   <Typography
                     as="a"
