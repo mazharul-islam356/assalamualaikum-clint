@@ -11,6 +11,8 @@ import {
 import { FaPlus } from "react-icons/fa6";
 import axios from "axios";
 import toast from "react-hot-toast";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const TABLE_HEAD = ["তারিখ", "ক্যাশ এ আয়", "কার্ড এ আয়", "ক্যাশ থেকে খরচ", "নাস্তা", "টোটাল", ""];
 
@@ -48,6 +50,7 @@ const DailyCalculation = () => {
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen((cur) => !cur);
+  const [startDate, setStartDate] = useState(new Date());
 
   // form data add
 
@@ -119,6 +122,7 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
         <Card className="mx-auto w-full max-w-[24rem]">
           <CardBody className="flex flex-col gap-4">
 
+         
             {/* ----modal header----- */}
             <Typography className="font-bangla text-center" variant="h4" color="blue-gray">
             দৈনিক আয় যুক্ত করুন
@@ -126,6 +130,15 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
            
            {/* ----modal form---- */}
             <form onSubmit={handleSubmit}>
+
+
+            <Typography 
+            className="mb-1 mt-4 font-bangla" variant="h6"
+            >
+            তারিখ
+            </Typography>
+            <DatePicker className="p-2 px-3 rounded-lg border-gray-400 border-2 w-[21rem]" selected={startDate} onChange={(date) => setStartDate(date)} />
+
             <Typography 
             className="mb-1 mt-4 font-bangla" variant="h6"
             >
