@@ -13,8 +13,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { MdDelete } from "react-icons/md";
-import { FaEdit } from "react-icons/fa";
+import { MdDelete, MdOutlineErrorOutline } from "react-icons/md";
+import { FaEdit, FaSearch } from "react-icons/fa";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 import useDailyCalculationData from "../../hooks/useDailyCalculationData";
@@ -31,9 +31,27 @@ const DailyCalculation = () => {
   const handleOpen = () => setOpen((cur) => !cur);
   const [startDate, setStartDate] = useState(new Date());
   const axiosPublic = useAxiosPublic()
+  const [searchQuery, setSearchQuery] = useState("");
+
+  
+   // Format the date
+   const formattedDate = startDate.toLocaleDateString("bn-BD", {
+    month: "long",
+    day: "2-digit",
+    year: "numeric",
+  });
+
+  // Format the time
+  const formattedTime = startDate.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+
+  console.log(formattedDate, formattedTime);
 
   // form data add
-
   const handleSubmit = (e) => {
     e.preventDefault()
     const form = e.target;
@@ -47,12 +65,15 @@ const DailyCalculation = () => {
     const nasta_coast_int = parseInt(nasta_coast); 
 
 console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int);
-     const dailyCalculaionData = {income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int}
+     const dailyCalculaionData = {income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int, formattedDate, formattedTime}
      console.log(dailyCalculaionData);
 
+    
+     
       axiosPublic.post('dailyCalculation', dailyCalculaionData)
       .then(response=>{
         if(response.data){
+          refetch()
          toast.success('আপনার দৈনিক হিসাব যুক্ত হয়েছে')
         }
       })
@@ -94,6 +115,28 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
 
 
 
+   const highlightText = (text, searchQuery) => {
+    if (!searchQuery) return text;
+  
+    const parts = text.split(new RegExp(`(${searchQuery})`, "gi"));
+    return parts.map((part, index) =>
+      part.toLowerCase() === searchQuery.toLowerCase() ? (
+        <span key={index} className="bg-yellow-200 text-black font-bold">
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
+
+   const filteredData = dailyCalculaionData.filter((item) =>
+    item.formattedDate.includes(searchQuery) ||
+    item.income_cash_int.toString().includes(searchQuery) ||
+    item.income_card_int.toString().includes(searchQuery) ||
+    item.cash_expenses_int.toString().includes(searchQuery) ||
+    item.nasta_coast_int.toString().includes(searchQuery)
+  );
 
 
 
@@ -107,9 +150,31 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
         <h2 className="text-2xl text-center font-semibold">দৈনিক হিসাব</h2>
       </div>
 
-      <Button className="font-bangla flex items-center gap-1 mt-6" onClick={handleOpen}>
+
+      <div className="flex justify-between items-center mt-4 px-2">
+      <div className="relative flex w-full gap-2 md:w-max">
+          <Input
+            type="search"
+            color="blue-gray"
+            label="এখানে সার্চ করুন..."
+            onChange={(e) => setSearchQuery(e.target.value)}
+            containerProps={{
+              className: "min-w-[288px]",
+            }}
+          />
+          <div
+         
+           color="transparent"
+            className="!absolute right-4 top-3 bg-transparent text-gray-600 rounded"
+          >
+          <FaSearch></FaSearch>
+
+          </div>
+        </div>
+      <Button className="font-bangla flex items-center gap-1" onClick={handleOpen}>
         <FaPlus className="text-md font-bold"></FaPlus>
         যুক্ত করুন</Button>
+      </div>
 
        
       <Dialog
@@ -199,108 +264,125 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
       </Dialog>
 
 
-      <Card className="h-full w-full shadow-md overflow-auto  mt-5 rounded-t-xl">
-        <table className="w-full min-w-max table-auto text-left">
-          <thead>
-            <tr>
-              {TABLE_HEAD.map((head) => (
-                <th
-                  key={head}
-                  className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 font-bangla"
-                >
-                  <Typography
-                    variant="small"
-                    color="black"
-                    className="font-semibold font-bangla leading-none text-lg"
-                  >
-                    {head}
-                  </Typography>
-                </th>
-              ))}
-            </tr>
-          </thead>
-
-          <tbody>
-  {dailyCalculaionData.map(
-    ({ income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int, _id }, index) => {
-      const total = 
-        income_cash_int - cash_expenses_int - nasta_coast_int + income_card_int;
-
-      return (
-        <tr key={_id} className="even:bg-blue-gray-50/50">
-          <td className="p-4">
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="font-normal"
+      <Card className="h-full w-full shadow-md overflow-auto mt-5 rounded-t-xl">
+  {filteredData.length === 0 ? (
+    // No Data UI
+    <div className="text-center p-10">
+      <Typography variant="h5" color="red" className="font-bangla flex items-center gap-1 justify-center">
+      <MdOutlineErrorOutline className="text-2xl" /> কোন তথ্য পাওয়া যায়নি
+      </Typography>
+    </div>
+  ) : (
+    // Table UI
+    <table className="w-full min-w-max table-auto text-left">
+      <thead>
+        <tr>
+          {TABLE_HEAD.map((head) => (
+            <th
+              key={head}
+              className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 font-bangla"
             >
-              {index + 1}
-            </Typography>
-          </td>
-          <td className="p-4">
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="font-normal"
-            >
-              {income_cash_int}
-            </Typography>
-          </td>
-          <td className="p-4">
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="font-normal"
-            >
-              {income_card_int}
-            </Typography>
-          </td>
-          <td className="p-4">
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="font-normal"
-            >
-              {cash_expenses_int}
-            </Typography>
-          </td>
-          <td className="p-4">
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="font-normal"
-            >
-              {nasta_coast_int}
-            </Typography>
-          </td>
-          <td className="p-4">
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="font-normal"
-            >
-              {total}
-            </Typography>
-          </td>
-         
-          <td>
-            <div className="flex items-center gap-1">
-              <FaEdit className="text-xl text-blue-500 font-body"></FaEdit>
-              <button onClick={() => handleDelete(_id)}>
-                <MdDelete className="text-xl text-red-400"></MdDelete>
-              </button>
-            </div>
-          </td>
+              <Typography
+                variant="small"
+                color="black"
+                className="font-semibold text-center font-bangla leading-none text-lg"
+              >
+                {head}
+              </Typography>
+            </th>
+          ))}
         </tr>
-      );
-    }
+      </thead>
+      <tbody>
+        {filteredData.map(
+          ({
+            income_card_int,
+            income_cash_int,
+            cash_expenses_int,
+            nasta_coast_int,
+            _id,
+            formattedDate,
+            formattedTime,
+          }) => {
+            const total =
+              income_cash_int - cash_expenses_int - nasta_coast_int + income_card_int;
+
+            return (
+              <tr key={_id} className="even:bg-blue-gray-50/50">
+              <td className="p-4">
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-bangla text-center font-semibold"
+                >
+                  {highlightText(formattedDate, searchQuery)}{" "}
+                  <span className="text-gray-600">
+                    ({highlightText(formattedTime, searchQuery)})
+                  </span>
+                </Typography>
+              </td>
+              <td className="p-4">
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-normal text-green-500 text-center"
+                >
+                  {highlightText(income_cash_int.toString(), searchQuery)}
+                </Typography>
+              </td>
+              <td className="p-4">
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-normal text-green-500 text-center"
+                >
+                  {highlightText(income_card_int.toString(), searchQuery)}
+                </Typography>
+              </td>
+              <td className="p-4">
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-normal text-red-500 text-center"
+                >
+                  -{highlightText(cash_expenses_int.toString(), searchQuery)}
+                </Typography>
+              </td>
+              <td className="p-4">
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-normal text-green-500 text-center"
+                >
+                  -{highlightText(nasta_coast_int.toString(), searchQuery)}
+                </Typography>
+              </td>
+              <td className="p-4">
+                <Typography
+                  variant="small"
+                  color="white"
+                  className="font-semibold bg-blue-600 w-16 mx-auto text-center"
+                >
+                  {total}
+                </Typography>
+              </td>
+              <td>
+                <div className="flex items-center gap-1">
+                  <FaEdit className="text-xl text-blue-500 font-body"></FaEdit>
+                  <button onClick={() => handleDelete(_id)}>
+                    <MdDelete className="text-xl text-red-400"></MdDelete>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            );
+          }
+        )}
+      </tbody>
+    </table>
   )}
-</tbody>
+</Card>
 
-
-
-        </table>
-      </Card>
     </div>
   );
 };
