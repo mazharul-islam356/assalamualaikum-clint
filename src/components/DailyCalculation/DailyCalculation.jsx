@@ -13,36 +13,15 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { MdDelete } from "react-icons/md";
+import { FaEdit } from "react-icons/fa";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
+import Swal from "sweetalert2";
+import useDailyCalculationData from "../../hooks/useDailyCalculationData";
 
 const TABLE_HEAD = ["তারিখ", "ক্যাশ এ আয়", "কার্ড এ আয়", "ক্যাশ থেকে খরচ", "নাস্তা", "টোটাল", ""];
 
-const TABLE_ROWS = [
-  {
-    name: "John Michael",
-    job: "Manager",
-    date: "23/04/18",
-  },
-  {
-    name: "Alexa Liras",
-    job: "Developer",
-    date: "23/04/18",
-  },
-  {
-    name: "Laurent Perrier",
-    job: "Executive",
-    date: "19/09/17",
-  },
-  {
-    name: "Michael Levi",
-    job: "Developer",
-    date: "24/12/08",
-  },
-  {
-    name: "Richard Gran",
-    job: "Manager",
-    date: "04/10/21",
-  },
-];
+
 
 
 
@@ -51,6 +30,7 @@ const DailyCalculation = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen((cur) => !cur);
   const [startDate, setStartDate] = useState(new Date());
+  const axiosPublic = useAxiosPublic()
 
   // form data add
 
@@ -67,11 +47,10 @@ const DailyCalculation = () => {
     const nasta_coast_int = parseInt(nasta_coast); 
 
 console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int);
-     const dailyCalcutaionData = {income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int}
-     console.log(dailyCalcutaionData);
+     const dailyCalculaionData = {income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int}
+     console.log(dailyCalculaionData);
 
-
-      axios.post('http://localhost:5001/dailyCalcutaion', dailyCalcutaionData)
+      axiosPublic.post('dailyCalculation', dailyCalculaionData)
       .then(response=>{
         if(response.data){
          toast.success('আপনার দৈনিক হিসাব যুক্ত হয়েছে')
@@ -84,22 +63,42 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
   }
 
   // get data
-  const [calculationData, setCalculationData] = useState([])
+ 
+  
 
-  useEffect(()=>{
-    axios.get('http://localhost:5001/dailyCalcutaion')
-  .then(response=>{
-    if(response.data){
-      
-    setCalculationData(response.data)
-    }
-  })
-  .catch(err=>{
-   console.log(err);
-  })
+    // delete data
+    const [dailyCalculaionData, refetch] = useDailyCalculationData()
+    const handleDelete = async (id) => {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const res = await axiosPublic.delete(`dailyCalculation/${id}`);
+            // console.log(res.data);
+            if (res.data.deletedCount > 0) {
+                // refetch to update the ui
+                refetch()
+                toast.success(` delteted succecfully!`)
+            }
+  
+  
+        }
+    });
+   };
 
-  },[])
-  console.log(calculationData);
+
+
+
+
+
+
+
 
   return (
     <div className="w-11/12 mx-auto mt-10 font-bangla">
@@ -200,7 +199,7 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
       </Dialog>
 
 
-      <Card className="h-full w-full shadow-md mt-5 rounded-t-xl">
+      <Card className="h-full w-full shadow-md overflow-auto  mt-5 rounded-t-xl">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
@@ -220,71 +219,86 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
               ))}
             </tr>
           </thead>
+
           <tbody>
-            {calculationData.map(({ 
-income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int, _id }, index) => (
-              <tr key={_id} className="even:bg-blue-gray-50/50">
-                <td className="p-4">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {index + 1}
-                  </Typography>
-                </td>
-                <td className="p-4">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {income_cash_int}
-                  </Typography>
-                </td>
-                <td className="p-4">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {income_card_int}
-                  </Typography>
-                </td>
-                <td className="p-4">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {cash_expenses_int}
-                  </Typography>
-                </td>
-                <td className="p-4">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {nasta_coast_int}
-                  </Typography>
-                </td>
-               
-                
-                <td className="p-4">
-                  <Typography
-                    as="a"
-                    href="#"
-                    variant="small"
-                    color="blue-gray"
-                    className="font-medium"
-                  >
-                    Edit
-                  </Typography>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+  {dailyCalculaionData.map(
+    ({ income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int, _id }, index) => {
+      const total = 
+        income_cash_int - cash_expenses_int - nasta_coast_int + income_card_int;
+
+      return (
+        <tr key={_id} className="even:bg-blue-gray-50/50">
+          <td className="p-4">
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              {index + 1}
+            </Typography>
+          </td>
+          <td className="p-4">
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              {income_cash_int}
+            </Typography>
+          </td>
+          <td className="p-4">
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              {income_card_int}
+            </Typography>
+          </td>
+          <td className="p-4">
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              {cash_expenses_int}
+            </Typography>
+          </td>
+          <td className="p-4">
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              {nasta_coast_int}
+            </Typography>
+          </td>
+          <td className="p-4">
+            <Typography
+              variant="small"
+              color="blue-gray"
+              className="font-normal"
+            >
+              {total}
+            </Typography>
+          </td>
+         
+          <td>
+            <div className="flex items-center gap-1">
+              <FaEdit className="text-xl text-blue-500 font-body"></FaEdit>
+              <button onClick={() => handleDelete(_id)}>
+                <MdDelete className="text-xl text-red-400"></MdDelete>
+              </button>
+            </div>
+          </td>
+        </tr>
+      );
+    }
+  )}
+</tbody>
+
+
+
         </table>
       </Card>
     </div>
