@@ -6,7 +6,8 @@ import {
   CardBody,
   CardFooter,
   Input,
-  Checkbox,
+  Select,
+  Option
 } from "@material-tailwind/react";
 import { FaPlus } from "react-icons/fa6";
 import axios from "axios";
@@ -21,6 +22,10 @@ import useDailyCalculationData from "../../hooks/useDailyCalculationData";
 
 const TABLE_HEAD = ["তারিখ", "ক্যাশ এ আয়", "কার্ড এ আয়", "ক্যাশ থেকে খরচ", "নাস্তা", "টোটাল", ""];
 
+const BengaliMonths = [
+  "জানুয়ারী", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন",
+  "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"
+];
 
 
 
@@ -32,8 +37,20 @@ const DailyCalculation = () => {
   const [startDate, setStartDate] = useState(new Date());
   const axiosPublic = useAxiosPublic()
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("");
+  console.log(selectedMonth);
 
-  
+  const [currentMonthName, setCurrentMonthName] = useState('');
+
+  useEffect(() => {
+    // Get the current month name in Bangla
+    const date = new Date();
+    const monthName = date.toLocaleString('bn-BD', { month: 'long' });
+    setCurrentMonthName(monthName); // Set the current month name
+    setSelectedMonth(monthName); // Default selection to current month
+  }, []);
+
+  console.log('object,',currentMonthName);
    // Format the date
    const formattedDate = startDate.toLocaleDateString("bn-BD", {
     month: "long",
@@ -50,6 +67,9 @@ const DailyCalculation = () => {
   });
 
   console.log(formattedDate, formattedTime);
+  const month = formattedDate.split(" ")[1].replace(",", "");
+console.log(month); // Output: "অক্টোবর"
+
 
   // form data add
   const handleSubmit = (e) => {
@@ -130,14 +150,25 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
     );
   };
 
-   const filteredData = dailyCalculaionData.filter((item) =>
-    item.formattedDate.includes(searchQuery) ||
-    item.income_cash_int.toString().includes(searchQuery) ||
-    item.income_card_int.toString().includes(searchQuery) ||
-    item.cash_expenses_int.toString().includes(searchQuery) ||
-    item.nasta_coast_int.toString().includes(searchQuery)
-  );
 
+
+ 
+  const filteredData = dailyCalculaionData
+  .filter(({ formattedDate }) => {
+    
+    if (!selectedMonth) return true; // Show all if no month is selected
+    const month = formattedDate.split(" ")[1].replace(",", "");
+    return month === selectedMonth;
+  })
+  .sort((a, b) => {
+    const dateA = new Date(
+      a.formattedDate.split(" ").reverse().join("-") // Convert "১০ ডিসেম্বর, ২০২৪" to "২০২৪-12-১০"
+    );
+    const dateB = new Date(
+      b.formattedDate.split(" ").reverse().join("-")
+    );
+    return dateA - dateB; // Ascending order
+  });
 
 
 
@@ -171,6 +202,29 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
 
           </div>
         </div>
+
+        <div>
+      <select
+        className="border border-gray-400 p-2 w-60 rounded-lg font-bangla mb-5"
+        value={selectedMonth}
+        defaultValue={currentMonthName}
+        onChange={(e) => {
+          console.log("Selected Value:", e.target.value); // Debug value
+          setSelectedMonth(e.target.value);
+        }}
+      >
+        <option>-- মাস বাছাই করুন --</option>
+        {BengaliMonths.map((month) => (
+          <option   key={month} value={month}>
+            {month}
+          </option>
+        ))}
+      </select>
+
+      
+    </div>
+
+
       <Button className="font-bangla flex items-center gap-1" onClick={handleOpen}>
         <FaPlus className="text-md font-bold"></FaPlus>
         যুক্ত করুন</Button>
@@ -209,6 +263,7 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
             ক্যাশ থেকে আয়
             </Typography>
             <Input 
+            required
             type="number"
             label="+ ক্যাশ থেকে আয় যুক্ত করুন" size="lg"
             name="income_cash" 
@@ -220,6 +275,7 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
             কার্ড থেকে আয়
             </Typography>
             <Input 
+            required
              type="number"
             label="+ কার্ড থেকে আয় যুক্ত করুন" size="lg" 
             name="income_card"
@@ -232,6 +288,7 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
             ক্যাশ থেকে ব্যয় 
             </Typography>
             <Input 
+            required
              type="number"
             label="- ক্যাশ থেকে ব্যয় বাদ দিন" size="lg"
             name="cash_expenses"
@@ -243,6 +300,7 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
             নাস্তার খরচ
             </Typography>
             <Input 
+            required
              type="number"
             label="- ক্যাশ থেকে নাস্তার খরচ বাদ দিন" size="lg"
             name="nasta_coast"
@@ -250,7 +308,7 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
             
           <CardFooter className="pt-0">
 
-          <button className="w-full font-bangla mx-auto mt-4 py-1 rounded-lg bg-gray-800 text-white" onClick={handleOpen}>যুক্ত করুন</button>
+          <button className="w-full font-bangla mx-auto mt-4 py-1 rounded-lg bg-gray-800 text-white">যুক্ত করুন</button>
             
           </CardFooter>
             </form>
@@ -264,7 +322,7 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
       </Dialog>
 
 
-      <Card className="h-full w-full shadow-md overflow-auto mt-5 rounded-t-xl">
+      <Card className="h-full w-full shadow-none border overflow-auto mt-5 rounded-t-xl mb-10">
   {filteredData.length === 0 ? (
     // No Data UI
     <div className="text-center p-10">
@@ -352,7 +410,7 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
                 <Typography
                   variant="small"
                   color="blue-gray"
-                  className="font-normal text-green-500 text-center"
+                  className="font-normal text-red-500 text-center"
                 >
                   -{highlightText(nasta_coast_int.toString(), searchQuery)}
                 </Typography>
@@ -379,6 +437,66 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
           }
         )}
       </tbody>
+      <tfoot className="border-t border-gray-400 bg-blue-400">
+          <tr>
+            <td className="p-4">
+              <Typography
+                color="white"
+                variant="h6"
+                className="font-bold text-center"
+              >
+                Total
+              </Typography>
+            </td>
+          
+            <td className="p-4">
+              <Typography
+                color="white"
+                variant="h6"
+                className="font-bold text-center"
+              >
+                5
+              </Typography>
+            </td>
+            <td className="p-4">
+              <Typography
+                color="white"
+                variant="h6"
+                className="font-bold text-center"
+              >
+                5
+              </Typography>
+            </td>
+            <td className="p-4">
+              <Typography
+                color="white"
+                variant="h6"
+                className="font-bold text-center"
+              >
+                5
+              </Typography>
+            </td>
+            <td className="p-4">
+              <Typography
+                color="white"
+                variant="h6"
+                className="font-bold text-center"
+              >
+                5
+              </Typography>
+            </td>
+            <td className="p-4">
+              <Typography
+                color="white"
+                variant="h6"
+                className="font-bold bg-green-600 text-center"
+              >
+                $1609.95
+              </Typography>
+            </td>
+            <td></td>
+          </tr>
+        </tfoot>
     </table>
   )}
 </Card>
