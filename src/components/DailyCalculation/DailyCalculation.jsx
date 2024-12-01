@@ -151,7 +151,7 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
   };
 
 
-
+ 
  
   const filteredData = dailyCalculaionData
   .filter(({ formattedDate }) => {
@@ -171,6 +171,26 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
   });
 
 
+  // Compute totals
+const totals = filteredData.reduce(
+  (acc, curr) => {
+    acc.totalIncomeCash += curr.income_cash_int || 0;
+    acc.totalIncomeCard += curr.income_card_int || 0;
+    acc.totalCashExpenses += curr.cash_expenses_int || 0;
+    acc.totalNastaCoast += curr.nasta_coast_int || 0;
+    return acc;
+  },
+  { totalIncomeCash: 0, totalIncomeCard: 0, totalCashExpenses: 0, totalNastaCoast: 0 }
+);
+
+// Compute the overall balance
+const overallTotal =
+  totals.totalIncomeCash +
+  totals.totalIncomeCard -
+  totals.totalCashExpenses -
+  totals.totalNastaCoast;
+
+
 
 
 
@@ -182,7 +202,7 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
       </div>
 
 
-      <div className="flex justify-between items-center mt-4 px-2">
+      <div className="flex justify-between items-center mt-10 px-2">
       <div className="relative flex w-full gap-2 md:w-max">
           <Input
             type="search"
@@ -437,66 +457,67 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
           }
         )}
       </tbody>
-      <tfoot className="border-t border-gray-400 bg-blue-400">
-          <tr>
-            <td className="p-4">
-              <Typography
-                color="white"
-                variant="h6"
-                className="font-bold text-center"
-              >
-                Total
-              </Typography>
-            </td>
-          
-            <td className="p-4">
-              <Typography
-                color="white"
-                variant="h6"
-                className="font-bold text-center"
-              >
-                5
-              </Typography>
-            </td>
-            <td className="p-4">
-              <Typography
-                color="white"
-                variant="h6"
-                className="font-bold text-center"
-              >
-                5
-              </Typography>
-            </td>
-            <td className="p-4">
-              <Typography
-                color="white"
-                variant="h6"
-                className="font-bold text-center"
-              >
-                5
-              </Typography>
-            </td>
-            <td className="p-4">
-              <Typography
-                color="white"
-                variant="h6"
-                className="font-bold text-center"
-              >
-                5
-              </Typography>
-            </td>
-            <td className="p-4">
-              <Typography
-                color="white"
-                variant="h6"
-                className="font-bold bg-green-600 text-center"
-              >
-                $1609.95
-              </Typography>
-            </td>
-            <td></td>
-          </tr>
-        </tfoot>
+     
+        <tfoot className="border-t border-gray-400 bg-blue-400">
+  <tr>
+    <td className="p-4">
+      <Typography
+        color="white"
+        variant="h5"
+        className="font-bold text-center"
+      >
+        Total
+      </Typography>
+    </td>
+    <td className="p-4">
+      <Typography
+        color="white"
+        variant="h6"
+        className="font-bold w-32 mx-auto bg-green-400 text-center"
+      >
+        {totals.totalIncomeCash}
+      </Typography>
+    </td>
+    <td className="p-4">
+      <Typography
+        color="white"
+        variant="h6"
+        className="font-bold w-32 mx-auto bg-green-400 text-center"
+      >
+        {totals.totalIncomeCard}
+      </Typography>
+    </td>
+    <td className="p-4">
+      <Typography
+        color="white"
+        variant="h6"
+        className="font-bold w-32 mx-auto bg-red-400 text-center"
+      >
+        -{totals.totalCashExpenses}
+      </Typography>
+    </td>
+    <td className="p-4">
+      <Typography
+        color="white"
+        variant="h6"
+        className="font-bold w-32 mx-auto bg-red-400 text-center"
+      >
+        -{totals.totalNastaCoast}
+      </Typography>
+    </td>
+    <td className="p-4">
+      <Typography
+        color="white"
+        variant="h6"
+        className="font-bold bg-green-600 border-2 border-white w-32 mx-auto text-center"
+      >
+        {overallTotal}
+      </Typography>
+    </td>
+    <td></td>
+  </tr>
+</tfoot>
+
     </table>
   )}
 </Card>
