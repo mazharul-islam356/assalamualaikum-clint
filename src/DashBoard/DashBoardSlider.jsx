@@ -113,6 +113,14 @@ const DashBoardSlider = () => {
             <span className="tooltip">দৈনিক হিসাব</span>
           </li>
 
+          <li>
+            <Link to='monthly-cost' className="a">
+            <i className='bx bx-dollar-circle' ></i>
+              <span className="link_name">এককালীন মাসিক খরচ</span>
+            </Link>
+            <span className="tooltip">এককালীন মাসিক খরচ</span>
+          </li>
+
           
           <li>
             <Link to='employeeProfile' className="a">
