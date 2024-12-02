@@ -1,54 +1,47 @@
 import { TbReportMoney } from "react-icons/tb";
 import {
-  Select,
-  Option,
   Typography,
   Input,
   Card,
   IconButton,
+  Button,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
 } from "@material-tailwind/react";
 import { useState } from "react";
 import { BiMinusCircle, BiPlusCircle } from "react-icons/bi";
 import { FaEye } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { GoChecklist } from "react-icons/go";
+import "./montlyCost.css";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
-const TABLE_HEAD = ["Name", "Job", "Employed", ""];
+const TABLE_HEAD = ["নং", "মাস", "মোট খরচ", ""];
 
 const TABLE_ROWS = [
   {
-    name: "John Michael",
-    job: "Manager",
-    date: "23/04/18",
-  },
-  {
-    name: "Alexa Liras",
-    job: "Developer",
-    date: "23/04/18",
-  },
-  {
-    name: "Laurent Perrier",
-    job: "Executive",
-    date: "19/09/17",
-  },
-  {
-    name: "Michael Levi",
-    job: "Developer",
-    date: "24/12/08",
-  },
-  {
-    name: "Richard Gran",
-    job: "Manager",
-    date: "04/10/21",
+    name: "০১",
+    job: "সেপ্টেম্বর",
+    date: "৮৪৮৫",
   },
 ];
 
 const MonthlyCost = () => {
+  const [open, setOpen] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState("");
+  const axiosSecure = useAxiosSecure();
+  const handleMonthChange = (event) => {
+    setSelectedMonth(event.target.value);
+  };
+  console.log(selectedMonth);
+  const handleOpen = () => setOpen(!open);
+
   // handle add or remove input
   const [inputPairs, setInputPairs] = useState([
     { id: 1, product: "", price: "" },
   ]);
-
   const addInputPair = () => {
     const newId = inputPairs.length + 1;
     setInputPairs([...inputPairs, { id: newId, product: "", price: "" }]);
@@ -65,6 +58,21 @@ const MonthlyCost = () => {
       )
     );
   };
+  console.log(inputPairs);
+  const monthlyCostData = { selectedMonth, inputPairs };
+
+  // post monthly cost data
+
+  const handleSubmit = () => {
+    axiosSecure
+      .post("monthlyCost", monthlyCostData)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <div className="w-11/12 mx-auto mt-10 font-bangla">
@@ -77,21 +85,46 @@ const MonthlyCost = () => {
 
       <div className="grid grid-cols-2 justify-between items-center justify-items-center mt-10">
         {/* month select */}
-        <div className="w-72 col-span-1">
-          <Select label="Select Month">
-            <Option>January</Option>
-            <Option>February</Option>
-            <Option>March</Option>
-            <Option>April</Option>
-            <Option>June</Option>
-            <Option>July</Option>
-            <Option>August</Option>
-          </Select>
+        <div className="w-64">
+          <label
+            htmlFor="month-select"
+            className="block mb-2 font-bangla text-lg font-semibold"
+          >
+            মাস নির্বাচন করুন:
+          </label>
+          <select
+            id="month-select"
+            value={selectedMonth}
+            onChange={handleMonthChange}
+            className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+          >
+            <option value="" disabled>
+              মাস নির্বাচন করুন
+            </option>
+            <option value="জানুয়ারী">জানুয়ারী</option>
+            <option value="ফেব্রুয়ারি">ফেব্রুয়ারি</option>
+            <option value="মার্চ">মার্চ</option>
+            <option value="এপ্রিল">এপ্রিল</option>
+            <option value="মে">মে</option>
+            <option value="জুন">জুন</option>
+            <option value="জুলাই">জুলাই</option>
+            <option value="আগস্ট">আগস্ট</option>
+            <option value="সেপ্টেম্বর">সেপ্টেম্বর</option>
+          </select>
+
+          {selectedMonth && (
+            <p className="mt-4 text-lg font-bangla">
+              নির্বাচিত মাস: <strong>{selectedMonth}</strong>
+            </p>
+          )}
         </div>
 
         <div>
           {inputPairs.map((pair, index) => (
-            <div key={pair.id} className="flex items-center space-x-4 space-y-2">
+            <div
+              key={pair.id}
+              className="flex items-center space-x-4 space-y-2"
+            >
               <div className="flex items-center gap-1">
                 <Typography
                   htmlFor={`product-${pair.id}`}
@@ -162,91 +195,114 @@ const MonthlyCost = () => {
             </div>
           ))}
         </div>
+
       </div>
-
-
+        <div className="flex mt-10 w-11/12 mx-auto justify-center items-center">
+          <button className="custom-btn btn-12">
+            <span>Click!</span>
+            <span>Add</span>
+          </button>
+        </div>
 
       {/* -----------Table---------- */}
 
-     <div className="my-8">
-     <hr className="mb-5" />
-     <div className="flex justify-center items-center gap-2">
-        <GoChecklist className="text-3xl" />
-        <h2 className="text-2xl text-center font-semibold">
-        লিস্ট
-        </h2>
-      </div>
-     <Card className="h-full mt-8 w-full overflow-auto">
-      <table className="w-full min-w-max table-auto text-left">
-        <thead>
-          <tr>
-            {TABLE_HEAD.map((head) => (
-              <th
-                key={head}
-                className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
-              >
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="font-normal leading-none opacity-70"
-                >
-                  {head}
-                </Typography>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {TABLE_ROWS.map(({ name, job, date }, index) => {
-            const isLast = index === TABLE_ROWS.length - 1;
-            const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
- 
-            return (
-              <tr key={name}>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
+      <div className="my-8">
+        <hr className="mb-5" />
+        <div className="flex justify-center items-center gap-2">
+          <GoChecklist className="text-3xl" />
+          <h2 className="text-2xl text-center font-semibold">লিস্ট</h2>
+        </div>
+        <Card className="h-full mt-8 w-full overflow-auto">
+          <table className="w-full min-w-max table-auto text-left">
+            <thead>
+              <tr>
+                {TABLE_HEAD.map((head) => (
+                  <th
+                    key={head}
+                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
                   >
-                    {name}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {job}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {date}
-                  </Typography>
-                </td>
-                <td className={classes}>
-                  <Link
-                    href="#"
-                    className="font-medium"
-                  >
-                    <FaEye className="text-xl"></FaEye>
-                  </Link>
-                </td>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-semibold font-bangla leading-none opacity-70"
+                    >
+                      {head}
+                    </Typography>
+                  </th>
+                ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </Card>
-     </div>
+            </thead>
+            <tbody>
+              {TABLE_ROWS.map(({ name, job, date }, index) => {
+                const isLast = index === TABLE_ROWS.length - 1;
+                const classes = isLast
+                  ? "p-4"
+                  : "p-4 border-b border-blue-gray-50";
 
+                return (
+                  <tr key={name}>
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-semibold font-bangla"
+                      >
+                        {name}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal font-bangla"
+                      >
+                        {job}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal font-bangla"
+                      >
+                        {date}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <Link href="#" className="font-medium">
+                        <FaEye onClick={handleOpen} className="text-xl"></FaEye>
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </Card>
 
+        <Dialog open={open} handler={handleOpen}>
+          <DialogHeader>Its a simple modal.</DialogHeader>
+          <DialogBody>
+            The key to more success is to have a lot of pillows. Put it this
+            way, it took me twenty five years to get these plants, twenty five
+            years of blood sweat and tears, and I&apos;m never giving up,
+            I&apos;m just getting started. I&apos;m up to something. Fan luv.
+          </DialogBody>
+          <DialogFooter>
+            <Button
+              variant="text"
+              color="red"
+              onClick={handleOpen}
+              className="mr-1"
+            >
+              <span>Cancel</span>
+            </Button>
+            <Button variant="gradient" color="green" onClick={handleOpen}>
+              <span>Confirm</span>
+            </Button>
+          </DialogFooter>
+        </Dialog>
+      </div>
     </div>
   );
 };

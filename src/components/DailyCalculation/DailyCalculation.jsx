@@ -125,7 +125,7 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
             if (res.data.deletedCount > 0) {
                 // refetch to update the ui
                 refetch()
-                toast.success(` delteted succecfully!`)
+                toast.success(`Delteted succecfully!`)
             }
   
   
@@ -445,7 +445,7 @@ const overallTotal =
                 </Typography>
               </td>
               <td>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 mr-4">
                   <FaEdit className="text-xl text-blue-500 font-body"></FaEdit>
                   <button onClick={() => handleDelete(_id)}>
                     <MdDelete className="text-xl text-red-400"></MdDelete>
@@ -507,9 +507,9 @@ const overallTotal =
     </td>
     <td className="p-4">
       <Typography
-        color="white"
+        color="green"
         variant="h6"
-        className="font-bold bg-green-600 border-2 border-white w-32 mx-auto text-center"
+        className="font-bold bg-white border border-dashed border-green-500 w-32 mx-auto text-center"
       >
         {overallTotal}
       </Typography>
