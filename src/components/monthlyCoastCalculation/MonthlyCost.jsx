@@ -10,13 +10,19 @@ import {
   DialogBody,
   DialogFooter,
 } from "@material-tailwind/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BiMinusCircle, BiPlusCircle } from "react-icons/bi";
 import { FaEye } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { GoChecklist } from "react-icons/go";
 import "./montlyCost.css";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import toast from "react-hot-toast";
+import useMonthlyCostData from "../../hooks/useMonthlyCostData";
+import { MdDelete } from "react-icons/md";
+import { RiFileList3Line } from "react-icons/ri";
+import { FcCalendar } from "react-icons/fc";
+import { FaMinusCircle } from "react-icons/fa";
 
 const TABLE_HEAD = ["নং", "মাস", "মোট খরচ", ""];
 
@@ -31,48 +37,103 @@ const TABLE_ROWS = [
 const MonthlyCost = () => {
   const [open, setOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("");
+  const[monthlyCostdata, setMonthlyCostdata] = useState([])
+  
+  
   const axiosSecure = useAxiosSecure();
   const handleMonthChange = (event) => {
     setSelectedMonth(event.target.value);
   };
-  console.log(selectedMonth);
-  const handleOpen = () => setOpen(!open);
+  // console.log(selectedMonth);
+ 
+  const [inputPairs, setInputPairs] = useState([{ id: 1, product: "", price: "" }])
+  const [total, setTotal] = useState(0)
+  console.log(inputPairs,total);
+  const monthlyCostData = {selectedMonth,inputPairs,total}
 
   // handle add or remove input
-  const [inputPairs, setInputPairs] = useState([
-    { id: 1, product: "", price: "" },
-  ]);
+  useEffect(() => {
+    const sum = inputPairs.reduce((acc, pair) => {
+      const numPrice = parseFloat(pair.price) || 0
+      return acc + numPrice
+    }, 0)
+    setTotal(sum)
+  }, [inputPairs])
+
   const addInputPair = () => {
-    const newId = inputPairs.length + 1;
-    setInputPairs([...inputPairs, { id: newId, product: "", price: "" }]);
-  };
+    const newId = inputPairs.length + 1
+    setInputPairs([...inputPairs, { id: newId, product: "", price: "" }])
+  }
 
   const removeInputPair = (id) => {
-    setInputPairs(inputPairs.filter((pair) => pair.id !== id));
-  };
+    setInputPairs(inputPairs.filter((pair) => pair.id !== id))
+  }
 
   const handleInputChange = (id, field, value) => {
     setInputPairs(
       inputPairs.map((pair) =>
         pair.id === id ? { ...pair, [field]: value } : pair
       )
-    );
+    )
+  }
+
+  // convert bangla to english number
+  const convertToBanglaNumerals = (number) => {
+    const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return number
+      .toString()
+      .split('')
+      .map((digit) => banglaDigits[digit])
+      .join('');
   };
-  console.log(inputPairs);
-  const monthlyCostData = { selectedMonth, inputPairs };
+  
 
   // post monthly cost data
-
-  const handleSubmit = () => {
-    axiosSecure
-      .post("monthlyCost", monthlyCostData)
+  const handleSubmit = (e) => {
+    e.preventDefault()
+  
+    axiosSecure.post("monthlyCost", monthlyCostData)
       .then((res) => {
         console.log(res.data);
+        if (res.data.acknowledged === true) {
+          refetch()
+          toast.success(`${selectedMonth} মাসের এককালীন খরচ যুক্ত করা হয়েছে`);
+        }
+       
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
+        toast.error("ডাটা যুক্ত করা সম্ভব হয়নি। আবার চেষ্টা করুন।");
       });
   };
+  const [ data ,refetch] = useMonthlyCostData()
+// console.log(monthlyCostdata);
+  // get monthly cost data
+  useEffect(()=>{
+    axiosSecure.get('monthlyCost')
+    .then((res)=>{
+      // console.log(res);
+      setMonthlyCostdata(res.data)
+    })
+    .catch(err=>{
+      console.log(err);
+    })
+  },[])
+  console.log(monthlyCostdata);
+
+  const [selectedData, setSelectedData] = useState(null);
+  const [products, setProducts] = useState([])
+console.log('dataaaaa',data);
+  const handleOpen = (id) => {
+    const selectedItem = data.find((item) => item._id === id); // Find the item by ID
+    console.log('iddddd',selectedItem);
+    setSelectedData(selectedItem); 
+    setProducts(selectedItem.inputPairs)
+    setOpen(true); // Open the modal
+  };
+  console.log(products);
+  
+ 
 
   return (
     <div className="w-11/12 mx-auto mt-10 font-bangla">
@@ -82,6 +143,8 @@ const MonthlyCost = () => {
           এককালীন মাসিক খরচ
         </h2>
       </div>
+
+      <form onSubmit={handleSubmit}>
 
       <div className="grid grid-cols-2 justify-between items-center justify-items-center mt-10">
         {/* month select */}
@@ -93,6 +156,7 @@ const MonthlyCost = () => {
             মাস নির্বাচন করুন:
           </label>
           <select
+          required
             id="month-select"
             value={selectedMonth}
             onChange={handleMonthChange}
@@ -120,91 +184,78 @@ const MonthlyCost = () => {
         </div>
 
         <div>
-          {inputPairs.map((pair, index) => (
-            <div
-              key={pair.id}
-              className="flex items-center space-x-4 space-y-2"
-            >
-              <div className="flex items-center gap-1">
-                <Typography
+          
+          {inputPairs.map((pair) => (
+          <div key={pair.id} className="flex items-center space-x-2 mb-2 gap-5">
+
+           <div className="flex items-center gap-1">
+           <Typography
                   htmlFor={`product-${pair.id}`}
-                  className="mb-1 mt-4 font-bangla text-lg font-semibold"
+                  className="font-bangla text-lg font-semibold"
                 >
                   পণ্য:
                 </Typography>
-                <Input
-                  value={pair.product}
-                  onChange={(e) =>
-                    handleInputChange(pair.id, "product", e.target.value)
-                  }
-                  id={`product-${pair.id}`}
-                  required
-                  type="text"
-                  label="পণ্যের নাম"
-                  size="lg"
-                  name="income_cash"
-                />
-              </div>
+            <Input
+              type="text"
+              required
+              value={pair.product}
+              onChange={(e) => handleInputChange(pair.id, "product", e.target.value)}
+              label="পণ্যের নাম"
+              className="flex-grow"
+            />
+           </div>
 
-              <div className="flex items-center gap-1">
-                <Typography
+            <div className="flex items-center justify-center justify-items-center gap-1">
+            <Typography
                   htmlFor={`price-${pair.id}`}
-                  className="mb-1 mt-4 font-bangla text-lg font-semibold"
+                  className="font-bangla text-lg font-semibold"
                 >
                   দাম:
                 </Typography>
-                <Input
-                  value={pair.price}
-                  onChange={(e) =>
-                    handleInputChange(pair.id, "price", e.target.value)
-                  }
-                  id={`price-${pair.id}`}
-                  required
-                  type="number"
-                  label="পণ্যের দাম"
-                  size="lg"
-                  name="income_cash"
-                />
-              </div>
-
-              {index > 0 && (
-                <IconButton
-                  type="button"
-                  variant="outlined"
-                  size="md"
-                  color="red"
-                  onClick={() => removeInputPair(pair.id)}
-                  aria-label="Remove input pair"
-                >
-                  <BiMinusCircle className="h-6 w-6" />
-                </IconButton>
-              )}
-
-              {index === inputPairs.length - 1 && (
-                <IconButton
-                  type="button"
-                  variant="outlined"
-                  size="md"
-                  color="green"
-                  onClick={addInputPair}
-                  aria-label="Add new input pair"
-                >
-                  <BiPlusCircle className="h-5 w-5" />
-                </IconButton>
-              )}
+            <Input
+              type="number"
+              value={pair.price}
+              onChange={(e) => handleInputChange(pair.id, "price", e.target.value)}
+              label="পণ্যের দাম"
+              required
+              className="flex-grow"
+            />
             </div>
-          ))}
+            <button
+              onClick={() => removeInputPair(pair.id)} 
+              
+            >
+              <FaMinusCircle className="text-2xl text-red-600" />
+            </button>
+          </div>
+        ))}
+        <Button
+        fullWidth 
+        size="sm"
+        color="green"
+          variant="outline"
+          onClick={addInputPair}
+          className="text-sm font-normal px-3 font-bangla"
+        >
+          + পণ্য যুক্ত করুন
+        </Button>
+
+        <div> <strong>Total: ${total.toFixed(2)}</strong></div>
         </div>
 
       </div>
+
         <div className="flex mt-10 w-11/12 mx-auto justify-center items-center">
-          <button className="custom-btn btn-12">
+          <button type="submit" className="custom-btn btn-12">
             <span>Click!</span>
             <span>Add</span>
           </button>
         </div>
+      </form>
 
-      {/* -----------Table---------- */}
+
+
+      {/* -----------List Table---------- */}
 
       <div className="my-8">
         <hr className="mb-5" />
@@ -233,21 +284,21 @@ const MonthlyCost = () => {
               </tr>
             </thead>
             <tbody>
-              {TABLE_ROWS.map(({ name, job, date }, index) => {
+              {monthlyCostdata.map(({ selectedMonth, _id, total }, index) => {
                 const isLast = index === TABLE_ROWS.length - 1;
                 const classes = isLast
                   ? "p-4"
                   : "p-4 border-b border-blue-gray-50";
 
                 return (
-                  <tr key={name}>
+                  <tr key={_id}>
                     <td className={classes}>
                       <Typography
                         variant="small"
                         color="blue-gray"
                         className="font-semibold font-bangla"
                       >
-                        {name}
+                         {convertToBanglaNumerals(index + 1)}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -256,7 +307,7 @@ const MonthlyCost = () => {
                         color="blue-gray"
                         className="font-normal font-bangla"
                       >
-                        {job}
+                        {selectedMonth}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -265,12 +316,12 @@ const MonthlyCost = () => {
                         color="blue-gray"
                         className="font-normal font-bangla"
                       >
-                        {date}
+                        {total}
                       </Typography>
                     </td>
                     <td className={classes}>
-                      <Link href="#" className="font-medium">
-                        <FaEye onClick={handleOpen} className="text-xl"></FaEye>
+                      <Link key={_id} className="font-medium">
+                        <FaEye onClick={() => handleOpen(_id)} className="text-xl"></FaEye>
                       </Link>
                     </td>
                   </tr>
@@ -280,27 +331,71 @@ const MonthlyCost = () => {
           </table>
         </Card>
 
-        <Dialog open={open} handler={handleOpen}>
-          <DialogHeader>Its a simple modal.</DialogHeader>
+
+              {/* -------modal--------- */}
+        <Dialog className="py-5 px-2" size="xs" open={open} >
+          <Typography className="text-center font-bangla font-semibold text-xl mt-3 flex items-center gap-1 justify-center mb-2 text-[#457b9d]">
+          <RiFileList3Line className="text-2xl" />
+            এককালীন মাসিক খরচের তালিকা</Typography>
           <DialogBody>
-            The key to more success is to have a lot of pillows. Put it this
-            way, it took me twenty five years to get these plants, twenty five
-            years of blood sweat and tears, and I&apos;m never giving up,
-            I&apos;m just getting started. I&apos;m up to something. Fan luv.
+
+          <div className="flex flex-col items-center">
+
+          {
+            selectedData && (
+              <div className="flex gap-3 text-gray-800 font-semibold">
+           <h4 className="text-xl">মাসের নাম:</h4>
+           <span className="text-gray-600">{selectedData.selectedMonth}</span>
+           </div>
+            )
+          }
+
+         
+<div className="flex gap-3 text-gray-800 font-semibold">
+           <h4 className="text-xl">পন্যের নাম:</h4>
+           <ol>
+            {products.map((item,idx)=>(
+              <div key={item._id} className="flex gap-1 text-gray-700">
+              <li>({idx +1}) </li>
+              <li><span>{item.product}:</span> <span> {item.price}</span></li>
+              </div>
+            ))}
+            
+           </ol>
+           
+           </div>
+            
+           
+           
+
+        <hr className="border border-gray-600 w-72" />
+       
+        {
+          selectedData && (
+            <div className="flex items-center gap-40 font-bold text-lg text-black">মোট:- <span className="bg-green-700 border border-dashed border-white text-white px-5">{selectedData.total}</span></div>
+          )
+        } 
+
+
+          </div>
+
+
           </DialogBody>
-          <DialogFooter>
-            <Button
-              variant="text"
-              color="red"
-              onClick={handleOpen}
-              className="mr-1"
-            >
-              <span>Cancel</span>
-            </Button>
-            <Button variant="gradient" color="green" onClick={handleOpen}>
-              <span>Confirm</span>
-            </Button>
+
+          <DialogFooter className="text-center flex flex-col justify-center gap-4">
+
+            <Typography color="black" className="font-bangla font-semibold flex items-center gap-1">
+            <FcCalendar className="text-2xl" />
+            পণ্য কিনার তারিখ ও সময়:
+            </Typography>
+
+              <Button onClick={() => setOpen(false)}  className="flex items-center gap-1" color="red">
+                <MdDelete className="text-xl"></MdDelete>
+                Delete
+              </Button>
+
           </DialogFooter>
+          
         </Dialog>
       </div>
     </div>
