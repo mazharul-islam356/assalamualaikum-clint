@@ -25,7 +25,7 @@ import { FcCalendar } from "react-icons/fc";
 import { FaMinusCircle } from "react-icons/fa";
 import Swal from "sweetalert2";
 
-const TABLE_HEAD = ["নং", "মাস", "মোট খরচ", "", ""];
+const TABLE_HEAD = ["নং", "মাস", "মোট খরচ", "বিস্তারিত দেখুন", ""];
 
 const TABLE_ROWS = [
   {
@@ -38,7 +38,6 @@ const TABLE_ROWS = [
 const MonthlyCost = () => {
   const [open, setOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("");
-  const[monthlyCostdata, setMonthlyCostdata] = useState([])
   const handleModalOpen = () => setOpen(!open);
 
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -131,6 +130,9 @@ const MonthlyCost = () => {
         console.log(res.data);
         if (res.data.acknowledged === true) {
           refetch()
+          setSelectedMonth("");
+          setInputPairs([{ id: 1, product: "", price: "" }]);
+          setTotal(0);
           toast.success(`${selectedMonth} মাসের এককালীন খরচ যুক্ত করা হয়েছে`);
         }
        
@@ -140,28 +142,15 @@ const MonthlyCost = () => {
         toast.error("ডাটা যুক্ত করা সম্ভব হয়নি। আবার চেষ্টা করুন।");
       });
   };
-  const [ monthlyCoast ,refetch] = useMonthlyCostData()
+  const [ monthlyCoastData ,refetch] = useMonthlyCostData()
 // console.log(monthlyCostdata);
 
 
-  // get monthly cost data
-  useEffect(()=>{
-    axiosSecure.get('monthlyCost')
-    .then((res)=>{
-      // console.log(res);
-      setMonthlyCostdata(res.data)
-    })
-    .catch(err=>{
-      console.log(err);
-    })
-  },[])
-  console.log(monthlyCostdata);
-
   const [selectedData, setSelectedData] = useState(null);
   const [products, setProducts] = useState([])
-console.log('dataaaaa',monthlyCoast);
+console.log('dataaaaa',monthlyCoastData);
   const handleOpen = (id) => {
-    const selectedItem = monthlyCoast.find((item) => item._id === id); // Find the item by ID
+    const selectedItem = monthlyCoastData.find((item) => item._id === id); // Find the item by ID
     console.log('iddddd',selectedItem);
     setSelectedData(selectedItem); 
     setProducts(selectedItem.inputPairs)
@@ -209,12 +198,12 @@ console.log('dataaaaa',monthlyCoast);
 
       <form onSubmit={handleSubmit}>
 
-      <div className="grid grid-cols-2 justify-between items-center justify-items-center mt-10">
+      <div className="grid lg:grid-cols-2 lg:justify-between justify-center items-center justify-items-center mt-10 gap-5">
         {/* month select */}
         <div className="w-64">
           <label
             htmlFor="month-select"
-            className="block mb-2 font-bangla text-lg font-semibold"
+            className="block mb-2 font-bangla text-lg font-semibold lg:text-start text-center"
           >
             মাস নির্বাচন করুন:
           </label>
@@ -223,7 +212,7 @@ console.log('dataaaaa',monthlyCoast);
             id="month-select"
             value={selectedMonth}
             onChange={handleMonthChange}
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+            className="lg:block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
           >
             <option value="" disabled>
               মাস নির্বাচন করুন
@@ -249,7 +238,7 @@ console.log('dataaaaa',monthlyCoast);
         <div>
           
           {inputPairs.map((pair) => (
-          <div key={pair.id} className="flex items-center space-x-2 mb-2 gap-5">
+          <div key={pair.id} className="lg:flex items-center lg:space-x-2 space-y-3 mb-2 gap-5">
 
            <div className="flex items-center gap-1">
            <Typography
@@ -285,6 +274,7 @@ console.log('dataaaaa',monthlyCoast);
             />
             </div>
             <button
+            
               onClick={() => removeInputPair(pair.id)} 
               
             >
@@ -327,18 +317,18 @@ console.log('dataaaaa',monthlyCoast);
           <h2 className="text-2xl text-center font-semibold">লিস্ট</h2>
         </div>
         <Card className="h-full mt-8 w-full overflow-auto">
-          <table className="w-full min-w-max table-auto text-left">
+          <table className="w-full min-w-max table-auto text-left mb-10">
             <thead>
               <tr>
                 {TABLE_HEAD.map((head) => (
                   <th
                     key={head}
-                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 "
                   >
                     <Typography
                       variant="small"
                       color="blue-gray"
-                      className="font-semibold font-bangla leading-none opacity-70"
+                      className="font-semibold text-center font-bangla leading-none opacity-80 text-md"
                     >
                       {head}
                     </Typography>
@@ -347,7 +337,7 @@ console.log('dataaaaa',monthlyCoast);
               </tr>
             </thead>
             <tbody>
-              {monthlyCostdata.map(({ selectedMonth, _id, total }, index) => {
+              {monthlyCoastData.map(({ selectedMonth, _id, total }, index) => {
                 const isLast = index === TABLE_ROWS.length - 1;
                 const classes = isLast
                   ? "p-4"
@@ -359,7 +349,7 @@ console.log('dataaaaa',monthlyCoast);
                       <Typography
                         variant="small"
                         color="blue-gray"
-                        className="font-semibold font-bangla"
+                        className="font-semibold text-center font-bangla"
                       >
                          {convertToBanglaNumerals(index + 1)}
                       </Typography>
@@ -368,7 +358,7 @@ console.log('dataaaaa',monthlyCoast);
                       <Typography
                         variant="small"
                         color="blue-gray"
-                        className="font-normal font-bangla"
+                        className="font-normal text-center font-bangla"
                       >
                         {selectedMonth}
                       </Typography>
@@ -377,19 +367,19 @@ console.log('dataaaaa',monthlyCoast);
                       <Typography
                         variant="small"
                         color="blue-gray"
-                        className="font-normal font-bangla"
+                        className="font-normal text-center font-bangla"
                       >
                         {total}
                       </Typography>
                     </td>
                     <td className={classes}>
-                      <Link key={_id} className="font-medium">
+                      <Link key={_id} className="font-medium text-center flex justify-center">
                         <FaEye onClick={() => handleOpen(_id)} className="text-xl"></FaEye>
                       </Link>
                     </td>
-                    <td>
+                    <td className={classes}>
                        {/* delete button */}
-              <Link onClick={()=> handleCostDelete(`${_id}`)} className="flex items-center gap-1 mt-3 text-red-500">
+              <Link key={_id} onClick={()=> handleCostDelete(`${_id}`)} className="flex text-center items-center gap-1 mt-3 text-red-500">
                 <MdDelete className="text-xl"></MdDelete>
               </Link>
                     </td>

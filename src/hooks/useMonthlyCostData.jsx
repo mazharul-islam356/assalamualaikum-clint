@@ -5,14 +5,14 @@ import { useQuery } from '@tanstack/react-query';
 const useMonthlyCostData = () => {
     const axiosSecure = useAxiosSecure()
     
-    const {data: monthlyCoast = [], refetch } =useQuery({
-        queryKey : ['monthlyCoast'] ,
+    const {data: monthlyCoastData = [], refetch } =useQuery({
+        queryKey : ['monthlyCoastData'] ,
         queryFn : async ()=>{
             const res= await axiosSecure.get('monthlyCost')
             return res.data
         }
     })
-    return [monthlyCoast , refetch ]
+    return [monthlyCoastData , refetch ]
    
 };
 
