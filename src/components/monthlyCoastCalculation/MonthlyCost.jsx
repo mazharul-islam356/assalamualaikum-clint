@@ -23,8 +23,9 @@ import { MdDelete } from "react-icons/md";
 import { RiFileList3Line } from "react-icons/ri";
 import { FcCalendar } from "react-icons/fc";
 import { FaMinusCircle } from "react-icons/fa";
+import Swal from "sweetalert2";
 
-const TABLE_HEAD = ["নং", "মাস", "মোট খরচ", ""];
+const TABLE_HEAD = ["নং", "মাস", "মোট খরচ", "", ""];
 
 const TABLE_ROWS = [
   {
@@ -38,6 +39,39 @@ const MonthlyCost = () => {
   const [open, setOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("");
   const[monthlyCostdata, setMonthlyCostdata] = useState([])
+  const handleModalOpen = () => setOpen(!open);
+
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentMonthName, setCurrentMonthName] = useState("");
+
+  useEffect(() => {
+    // Update the current date every second
+    const interval = setInterval(() => {
+      setCurrentDate(new Date());
+    }, 1000);
+
+    // Get the current month name in Bangla
+    const monthName = new Date().toLocaleString("bn-BD", { month: "long" });
+    setCurrentMonthName(monthName);
+
+    return () => clearInterval(interval); // Clean up the interval
+  }, []);
+
+  // Format the date in Bangla
+  const formattedDate = currentDate.toLocaleDateString("bn-BD", {
+    month: "long",
+    day: "2-digit",
+    year: "numeric",
+  });
+
+  // Format the time in Bangla
+  const formattedTime = currentDate.toLocaleTimeString("bn-BD", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+
   
   
   const axiosSecure = useAxiosSecure();
@@ -49,7 +83,7 @@ const MonthlyCost = () => {
   const [inputPairs, setInputPairs] = useState([{ id: 1, product: "", price: "" }])
   const [total, setTotal] = useState(0)
   console.log(inputPairs,total);
-  const monthlyCostData = {selectedMonth,inputPairs,total}
+  const monthlyCostData = {selectedMonth,inputPairs,total,formattedDate,formattedTime}
 
   // handle add or remove input
   useEffect(() => {
@@ -106,8 +140,10 @@ const MonthlyCost = () => {
         toast.error("ডাটা যুক্ত করা সম্ভব হয়নি। আবার চেষ্টা করুন।");
       });
   };
-  const [ data ,refetch] = useMonthlyCostData()
+  const [ monthlyCoast ,refetch] = useMonthlyCostData()
 // console.log(monthlyCostdata);
+
+
   // get monthly cost data
   useEffect(()=>{
     axiosSecure.get('monthlyCost')
@@ -123,15 +159,42 @@ const MonthlyCost = () => {
 
   const [selectedData, setSelectedData] = useState(null);
   const [products, setProducts] = useState([])
-console.log('dataaaaa',data);
+console.log('dataaaaa',monthlyCoast);
   const handleOpen = (id) => {
-    const selectedItem = data.find((item) => item._id === id); // Find the item by ID
+    const selectedItem = monthlyCoast.find((item) => item._id === id); // Find the item by ID
     console.log('iddddd',selectedItem);
     setSelectedData(selectedItem); 
     setProducts(selectedItem.inputPairs)
     setOpen(true); // Open the modal
   };
   console.log(products);
+
+
+  // delete cost data
+  const handleCostDelete = async (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+  }).then(async (result) => {
+      if (result.isConfirmed) {
+          const res = await axiosSecure.delete(`monthlyCost/${id}`);
+          // console.log(res.data);
+          if (res.data.deletedCount > 0) {
+              // refetch to update the ui
+              refetch()
+              toast.success(`Delteted succecfully!`)
+          }
+
+
+      }
+  });
+ };
+
   
  
 
@@ -324,6 +387,12 @@ console.log('dataaaaa',data);
                         <FaEye onClick={() => handleOpen(_id)} className="text-xl"></FaEye>
                       </Link>
                     </td>
+                    <td>
+                       {/* delete button */}
+              <Link onClick={()=> handleCostDelete(`${_id}`)} className="flex items-center gap-1 mt-3 text-red-500">
+                <MdDelete className="text-xl"></MdDelete>
+              </Link>
+                    </td>
                   </tr>
                 );
               })}
@@ -333,7 +402,7 @@ console.log('dataaaaa',data);
 
 
               {/* -------modal--------- */}
-        <Dialog className="py-5 px-2" size="xs" open={open} >
+        <Dialog handler={handleModalOpen} className="py-5 px-2" size="xs" open={open} >
           <Typography className="text-center font-bangla font-semibold text-xl mt-3 flex items-center gap-1 justify-center mb-2 text-[#457b9d]">
           <RiFileList3Line className="text-2xl" />
             এককালীন মাসিক খরচের তালিকা</Typography>
@@ -384,15 +453,22 @@ console.log('dataaaaa',data);
 
           <DialogFooter className="text-center flex flex-col justify-center gap-4">
 
-            <Typography color="black" className="font-bangla font-semibold flex items-center gap-1">
-            <FcCalendar className="text-2xl" />
-            পণ্য কিনার তারিখ ও সময়:
-            </Typography>
+          {
+            selectedData && (
 
-              <Button onClick={() => setOpen(false)}  className="flex items-center gap-1" color="red">
-                <MdDelete className="text-xl"></MdDelete>
-                Delete
-              </Button>
+            <div className="flex flex-col items-center gap-1">
+              <Typography color="black" className="font-bangla font-semibold flex items-center gap-1">
+            <FcCalendar className="text-2xl" />
+            পণ্য কিনার তারিখ ও সময়: 
+            </Typography>
+            <span className="text-xs  text-gray-600">{selectedData.formattedDate} <span>({selectedData.formattedTime})</span></span>
+
+             
+
+            </div>
+            )
+          }
+
 
           </DialogFooter>
           
