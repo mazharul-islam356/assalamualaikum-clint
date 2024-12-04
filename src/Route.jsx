@@ -4,6 +4,7 @@ import Login from "./Authentication/Login";
 import Register from "./Authentication/Register";
 import DailyCalculation from "./components/DailyCalculation/DailyCalculation";
 import MonthlyCost from "./components/monthlyCoastCalculation/MonthlyCost";
+import EmployeeProfile from "./components/EmployeeProfile/EmployeeProfile";
 
 
   export const router = createBrowserRouter([
@@ -27,6 +28,10 @@ import MonthlyCost from "./components/monthlyCoastCalculation/MonthlyCost";
         {
           path: 'monthly-cost',
           element: <MonthlyCost></MonthlyCost>
+        },
+        {
+          path: 'employee-profile',
+          element: <EmployeeProfile></EmployeeProfile>
         }
       ]
       

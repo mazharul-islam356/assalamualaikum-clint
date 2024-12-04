@@ -202,15 +202,15 @@ const overallTotal =
       </div>
 
 
-      <div className="flex justify-between items-center mt-10 px-2">
-      <div className="relative flex w-full gap-2 md:w-max">
+      <div className="lg:flex lg:justify-between items-center justify-center justify-items-center mt-10 px-2">
+      <div className="relative flex w-full gap-2 md:w-max mb-3">
           <Input
             type="search"
             color="blue-gray"
             label="এখানে সার্চ করুন..."
             onChange={(e) => setSearchQuery(e.target.value)}
             containerProps={{
-              className: "min-w-[288px]",
+              className: "lg:min-w-[288px]",
             }}
           />
           <div
@@ -223,9 +223,9 @@ const overallTotal =
           </div>
         </div>
 
-        <div>
+        <div className="flex justify-center lg:flex-col">
       <select
-        className="border border-gray-400 p-2 w-60 rounded-lg font-bangla mb-5"
+        className="border border-gray-400 p-2 w-60 rounded-lg font-bangla lg:mb-5 mb-3"
         value={selectedMonth}
         defaultValue={currentMonthName}
         onChange={(e) => {
@@ -245,8 +245,8 @@ const overallTotal =
     </div>
 
 
-      <Button className="font-bangla flex items-center gap-1" onClick={handleOpen}>
-        <FaPlus className="text-md font-bold"></FaPlus>
+      <Button variant="outlined" className="font-bangla flex items-center text-sm gap-1" onClick={handleOpen}>
+        <FaPlus className="text-lg font-bold"></FaPlus>
         যুক্ত করুন</Button>
       </div>
 
@@ -271,11 +271,11 @@ const overallTotal =
 
 
             <Typography 
-            className="mb-1 mt-4 font-bangla" variant="h6"
+            className="mb-1 lg:mt-4 font-bangla" variant="h6"
             >
             তারিখ
             </Typography>
-            <DatePicker className="p-2 px-3 rounded-lg border-gray-400 border-2 w-[21rem]" selected={startDate} onChange={(date) => setStartDate(date)} />
+            <DatePicker className="p-2 px-3 rounded-lg border-gray-400 border-2 lg:w-[21rem] w-72" selected={startDate} onChange={(date) => setStartDate(date)} />
 
             <Typography 
             className="mb-1 mt-4 font-bangla" variant="h6"

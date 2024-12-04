@@ -123,7 +123,7 @@ const DashBoardSlider = () => {
 
           
           <li>
-            <Link to='employeeProfile' className="a">
+            <Link to='employee-profile' className="a">
             <i className='bx bx-user-circle'></i>
               <span className="link_name">এমপ্লয়ী প্রোফাইল</span>
             </Link>
