@@ -229,27 +229,24 @@ const overallTotal =
         value={selectedMonth}
         defaultValue={currentMonthName}
         onChange={(e) => {
-          console.log("Selected Value:", e.target.value); // Debug value
+          console.log("Selected Value:", e.target.value); 
           setSelectedMonth(e.target.value);
         }}
       >
-        <option>-- মাস বাছাই করুন --</option>
+        <option disabled>-- মাস বাছাই করুন --</option>
         {BengaliMonths.map((month) => (
           <option   key={month} value={month}>
             {month}
           </option>
         ))}
       </select>
-
       
     </div>
 
-
-      <Button variant="outlined" className="font-bangla flex items-center text-sm gap-1" onClick={handleOpen}>
+      <Button size="md" color="green" variant="outlined" className="font-bangla flex items-center text-sm gap-1" onClick={handleOpen}>
         <FaPlus className="text-lg font-bold"></FaPlus>
         যুক্ত করুন</Button>
       </div>
-
        
       <Dialog
         size="xs"
@@ -259,7 +256,6 @@ const overallTotal =
       >
         <Card className="mx-auto w-full max-w-[24rem]">
           <CardBody className="flex flex-col gap-4">
-
          
             {/* ----modal header----- */}
             <Typography className="font-bangla text-center" variant="h4" color="blue-gray">
@@ -275,7 +271,7 @@ const overallTotal =
             >
             তারিখ
             </Typography>
-            <DatePicker className="p-2 px-3 rounded-lg border-gray-400 border-2 lg:w-[21rem] w-72" selected={startDate} onChange={(date) => setStartDate(date)} />
+            <DatePicker className="p-2 px-3 rounded-lg border-gray-400 border-2 lg:w-[21rem] min-w-md" selected={startDate} onChange={(date) => setStartDate(date)} />
 
             <Typography 
             className="mb-1 mt-4 font-bangla" variant="h6"

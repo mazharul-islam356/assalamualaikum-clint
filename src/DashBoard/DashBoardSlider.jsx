@@ -1,19 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import "./dashBoardSlider.css";
 // import profile from "../assets/profile.jpg";
 import { Link, Outlet } from "react-router-dom";
-import { MdAdminPanelSettings, MdLogout, MdNotificationAdd, MdNotifications } from "react-icons/md";
-import { CgProfile } from "react-icons/cg";
-import {
-  Accordion,
-  AccordionBody,
-  AccordionHeader,
-  Badge,
-  IconButton,
-} from "@material-tailwind/react";
-import { CiStreamOn, CiViewList } from "react-icons/ci";
-import { PiReadCvLogoDuotone } from "react-icons/pi";
-import { HiOutlineIdentification } from "react-icons/hi2";
+
 
 
 
@@ -24,13 +13,12 @@ const DashBoardSlider = () => {
   const [dashBoardSliderOpen, setdashBoardSliderOpen] = useState(false);
   const [leaveOpen, setLeaveOpen] = useState(false);
   const [alwaysOpen, setAlwaysOpen] = useState(false);
-  const [alwaysOpen2, setAlwaysOpen2] = useState(false);
+ 
  
 
 
   const handleAlwaysOpen = () => setAlwaysOpen((cur) => !cur);
-  const handleAlwaysOpen2 = () => setAlwaysOpen2((cur) => !cur);
-  const handleAlwaysOpen3 = () => setAlwaysOpen3((cur) => !cur);
+ 
 
   
   useEffect(() => {
@@ -68,14 +56,7 @@ const DashBoardSlider = () => {
     menuBtnChange();
   }, [isOpen]);
 
-   // State to keep track of the current active page
-   const [activePage, setActivePage] = useState(null);
-
-   // Function to set the current page
-   const handlePageClick = (page) => {
-     setActivePage(page);
-   };
-
+ 
  
 
 
@@ -122,6 +103,14 @@ const DashBoardSlider = () => {
           </li>
 
           
+          <li>
+            <Link to='employee-cost' className="a">
+            <i className='bx bx-purchase-tag-alt'></i>
+              <span className="link_name">কর্মীর অতিরিক্ত খরচ</span>
+            </Link>
+            <span className="tooltip">কর্মীর অতিরিক্ত খরচ</span>
+          </li>
+
           <li>
             <Link to='employee-profile' className="a">
             <i className='bx bx-user-circle'></i>

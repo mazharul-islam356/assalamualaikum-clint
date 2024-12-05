@@ -5,6 +5,7 @@ import Register from "./Authentication/Register";
 import DailyCalculation from "./components/DailyCalculation/DailyCalculation";
 import MonthlyCost from "./components/monthlyCoastCalculation/MonthlyCost";
 import EmployeeProfile from "./components/EmployeeProfile/EmployeeProfile";
+import EmployeeCost from "./components/EmployeeCost/EmployeeCost";
 
 
   export const router = createBrowserRouter([
@@ -32,7 +33,11 @@ import EmployeeProfile from "./components/EmployeeProfile/EmployeeProfile";
         {
           path: 'employee-profile',
           element: <EmployeeProfile></EmployeeProfile>
-        }
+        },
+        {
+          path: 'employee-cost',
+          element: <EmployeeCost></EmployeeCost>
+        },
       ]
       
             
