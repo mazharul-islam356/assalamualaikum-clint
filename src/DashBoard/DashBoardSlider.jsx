@@ -111,22 +111,22 @@ const DashBoardSlider = () => {
             <span className="tooltip">কর্মীর অতিরিক্ত খরচ</span>
           </li>
 
-          <li>
+          {/* <li>
             <Link to='employee-profile' className="a">
             <i className='bx bx-user-circle'></i>
               <span className="link_name">এমপ্লয়ী প্রোফাইল</span>
             </Link>
             <span className="tooltip">এমপ্লয়ী প্রোফাইল</span>
-          </li>
+          </li> */}
 
           
 
           <li>
-            <Link className="a">
+            <Link to='dharAmount' className="a">
             <i className='bx bx-wallet-alt'></i>
-              <span className="link_name">মাসিক খরচের হিসাব</span>
+              <span className="link_name">ধারকৃত টাকার হিসাব</span>
             </Link>
-            <span className="tooltip">মাসিক খরচের হিসাব</span>
+            <span className="tooltip">ধারকৃত টাকার হিসাব</span>
           </li>
 
 

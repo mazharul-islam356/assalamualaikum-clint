@@ -1,8 +1,13 @@
-import { Button, Input, Option, Select, Textarea } from "@material-tailwind/react";
+import { Button, Card, Input, Option, Select, Textarea, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import { GrMoney } from "react-icons/gr";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import toast from "react-hot-toast";
+import { FaSackDollar } from "react-icons/fa6";
+const TABLE_HEAD = ["নাম", "খরচ", "কারণ", "তারিখ ও সময়", ""];
+ 
+
 
 const EmployeeCost = () => {
   const [startDate, setStartDate] = useState(new Date());
@@ -10,6 +15,7 @@ const EmployeeCost = () => {
   const [currentMonthName, setCurrentMonthName] = useState("");
   const axiosSecure = useAxiosSecure()
   const [selectedMonth, setSelectedMonth] = useState("");
+  const [employeeCostData,setEmployeeCostData] = useState([])
 
   useEffect(() => {
     // Update the current date every second
@@ -47,23 +53,41 @@ const EmployeeCost = () => {
       const form = e.target;
       const employee_name = form.employee_name.value;
       const cost = form.cost.value;
+      const costInt = parseInt(cost)
       const reason = form.reason.value;
       console.log(employee_name, cost, reason);
 
-      const employeeCost = {employee_name, cost, reason, formattedDate, formattedTime}
+      const employeeCost = {employee_name, costInt, reason, formattedDate, formattedTime}
 
       axiosSecure.post('/employee-cost', employeeCost)
       .then(res=>{
+
+        if(res.data.acknowledged === true)
+          toast.success(`${employee_name} এর অতিরিক্ত ${cost} টাকা যুক্ত হয়েছে`)
         console.log(res.data);
+        form.reset()
       })
       .catch(err=>{
         console.log(err);
-      })
-
-      
-   
-
+      })  
   }
+
+  useEffect(()=>{
+
+    axiosSecure('/employee-cost')
+    .then(res=>{
+      setEmployeeCostData(res.data)
+    })
+    .catch(err=>{
+      console.log(err);
+    })
+
+  },[])
+
+  console.log(employeeCostData);
+
+
+
   return (
     <div className="w-11/12 mx-auto mt-10 font-bangla">
       <div className="flex justify-center items-center gap-2">
@@ -112,6 +136,85 @@ const EmployeeCost = () => {
      </div>
 
       </form>
+
+      <div className="mt-10 border shadow-md pb-6 rounded-b-lg">
+          <div className="border-b rounded-md border-blue-gray-100 bg-blue-gray-50 p-4">
+            <div className="flex justify-center items-center gap-1">
+              <FaSackDollar className="text-2xl"></FaSackDollar>
+              <div>
+                <h3 className="font-semibold text-xl">অতিরিক্ত খরচ</h3>
+              </div>
+            </div>
+          </div>
+          <Card className="overflow-auto">
+      <table className="w-full min-w-max table-auto text-center">
+        <thead>
+          <tr>
+            {TABLE_HEAD.map((head) => (
+              <th
+                key={head}
+                className="border-b border-blue-gray-100 p-4"
+              >
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-semibold text-md leading-none opacity-90 text-center font-bangla"
+                >
+                  {head}
+                </Typography>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {employeeCostData.map(({ employee_name, cost, reason, formattedDate,formattedTime }, index) => {
+            const isLast = index === employeeCostData.length - 1;
+            const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
+ 
+            return (
+              <tr key={index}>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="black"
+                    className="font-bangla text-center"
+                  >
+                    {employee_name}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="black"
+                    className="font-normal text-center"
+                  >
+                    {cost}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="black"
+                    className="font-normal text-center"
+                  >
+                    {reason}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <div
+                    className="font-medium text-sm text-black text-center"
+                  >
+                    {formattedDate}({formattedTime})
+                  </div>
+                </td>
+               
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </Card>
+        </div>
     </div>
   );
 };

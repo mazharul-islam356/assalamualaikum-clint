@@ -7,6 +7,7 @@ import MonthlyCost from "./components/monthlyCoastCalculation/MonthlyCost";
 import EmployeeProfile from "./components/EmployeeProfile/EmployeeProfile";
 import EmployeeCost from "./components/EmployeeCost/EmployeeCost";
 import MangeDharAmount from "./components/DharAmount/MangeDharAmount";
+import DharAmount from "./components/DharAmount/DharAmount";
 
 
   export const router = createBrowserRouter([
@@ -42,6 +43,10 @@ import MangeDharAmount from "./components/DharAmount/MangeDharAmount";
         {
           path: 'manage-dharAmount',
           element: <MangeDharAmount></MangeDharAmount>
+        },
+        {
+          path: 'dharAmount',
+          element: <DharAmount></DharAmount>
         },
       ]
       
