@@ -363,7 +363,9 @@ const EmployeeProfile = () => {
 
                       <td>
 
+                      <Link to='/dashBoard/manage-dharAmount'>
                       <LiaEditSolid className="text-xl text-green-600" />
+                      </Link>
 
                       </td>
 
