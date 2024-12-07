@@ -39,7 +39,6 @@ const DailyCalculation = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("");
   console.log(selectedMonth);
-
   const [currentMonthName, setCurrentMonthName] = useState('');
 
   useEffect(() => {

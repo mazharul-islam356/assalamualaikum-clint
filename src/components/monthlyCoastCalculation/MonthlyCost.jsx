@@ -151,7 +151,7 @@ const MonthlyCost = () => {
 console.log('dataaaaa',monthlyCoastData);
   const handleOpen = (id) => {
     const selectedItem = monthlyCoastData.find((item) => item._id === id); // Find the item by ID
-    console.log('iddddd',selectedItem);
+    // console.log('iddddd',selectedItem);
     setSelectedData(selectedItem); 
     setProducts(selectedItem.inputPairs)
     setOpen(true); // Open the modal
@@ -378,7 +378,7 @@ console.log('dataaaaa',monthlyCoastData);
                       </Link>
                     </td>
                     <td className={classes}>
-                       {/* delete button */}
+              {/* delete button */}
               <Link key={_id} onClick={()=> handleCostDelete(`${_id}`)} className="flex text-center items-center gap-1 mt-3 text-red-500">
                 <MdDelete className="text-xl"></MdDelete>
               </Link>
