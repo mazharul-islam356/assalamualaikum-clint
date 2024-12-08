@@ -5,13 +5,14 @@ import { GrMoney } from "react-icons/gr";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import toast from "react-hot-toast";
 import { FaSackDollar } from "react-icons/fa6";
+import useEmployeeCost from "../../hooks/useEmployeeCost";
 const TABLE_HEAD = ["নাম", "খরচ", "কারণ", "তারিখ ও সময়", ""];
  
 
 
 const EmployeeCost = () => {
   const [startDate, setStartDate] = useState(new Date());
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(startDate);
   const [currentMonthName, setCurrentMonthName] = useState("");
   const axiosSecure = useAxiosSecure()
   const [selectedMonth, setSelectedMonth] = useState("");
@@ -32,7 +33,7 @@ const EmployeeCost = () => {
   }, []);
 
   // Format the date in Bangla
-  const formattedDate = currentDate.toLocaleDateString("bn-BD", {
+  const formattedDate = startDate.toLocaleDateString("bn-BD", {
     month: "long",
     day: "2-digit",
     year: "numeric",
@@ -66,25 +67,14 @@ const EmployeeCost = () => {
           toast.success(`${employee_name} এর অতিরিক্ত ${cost} টাকা যুক্ত হয়েছে`)
         console.log(res.data);
         form.reset()
+        refetch()
       })
       .catch(err=>{
         console.log(err);
       })  
   }
 
-  useEffect(()=>{
-
-    axiosSecure('/employee-cost')
-    .then(res=>{
-      setEmployeeCostData(res.data)
-    })
-    .catch(err=>{
-      console.log(err);
-    })
-
-  },[])
-
-  console.log(employeeCostData);
+  const [employeeCostDataa, refetch] = useEmployeeCost()
 
 
 
@@ -139,14 +129,14 @@ const EmployeeCost = () => {
 
       <div className="mt-10 border shadow-md pb-6 rounded-b-lg">
           <div className="border-b rounded-md border-blue-gray-100 bg-blue-gray-50 p-4">
-            <div className="flex justify-center items-center gap-1">
+            <div className="flex justify-center items-center gap-1 ">
               <FaSackDollar className="text-2xl"></FaSackDollar>
               <div>
                 <h3 className="font-semibold text-xl">অতিরিক্ত খরচ</h3>
               </div>
             </div>
           </div>
-          <Card className="overflow-auto">
+          <Card className="overflow-auto shadow-none ">
       <table className="w-full min-w-max table-auto text-center">
         <thead>
           <tr>
@@ -167,7 +157,7 @@ const EmployeeCost = () => {
           </tr>
         </thead>
         <tbody>
-          {employeeCostData.map(({ employee_name, cost, reason, formattedDate,formattedTime }, index) => {
+          {employeeCostDataa.map(({ employee_name, costInt, reason, formattedDate,formattedTime }, index) => {
             const isLast = index === employeeCostData.length - 1;
             const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
  
@@ -188,7 +178,7 @@ const EmployeeCost = () => {
                     color="black"
                     className="font-normal text-center"
                   >
-                    {cost}
+                    {costInt}
                   </Typography>
                 </td>
                 <td className={classes}>
@@ -212,6 +202,17 @@ const EmployeeCost = () => {
             );
           })}
         </tbody>
+
+        <tfoot>
+      <tr>
+        <td className="font-semibold text-center text-black text-xl font-bangla pt-3">
+          মোট =
+        </td>
+        <td  className="border border-dashed text-white bg-green-500 font-semibold text-center  w-16">
+          {employeeCostDataa.reduce((total, item) => total + item.costInt, 0)} 
+        </td>
+      </tr>
+    </tfoot>
       </table>
     </Card>
         </div>
