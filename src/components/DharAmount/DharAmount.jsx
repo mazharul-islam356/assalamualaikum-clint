@@ -98,8 +98,9 @@ const DharAmount = () => {
       console.log('iddddd',detailsData);
       setSelectedData(detailsData); 
       setOpen2(true);
-  
     }
+
+    
 
     return (
         <div className="w-11/12 mx-auto">

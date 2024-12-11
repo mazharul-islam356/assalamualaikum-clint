@@ -72,7 +72,7 @@ const DashBoardSlider = () => {
                      
              
                 <Link
-                  to="#"
+                  to="dashboard"
                   className="transition ease-in-out a"
                   onClick={handleDashBoardSliderOpen}
                 >

@@ -8,6 +8,7 @@ import EmployeeProfile from "./components/EmployeeProfile/EmployeeProfile";
 import EmployeeCost from "./components/EmployeeCost/EmployeeCost";
 import MangeDharAmount from "./components/DharAmount/MangeDharAmount";
 import DharAmount from "./components/DharAmount/DharAmount";
+import DashBoard from "./DashBoard/DashBoard";
 
 
   export const router = createBrowserRouter([
@@ -24,6 +25,10 @@ import DharAmount from "./components/DharAmount/DharAmount";
       path:'/dashBoard',
       element:<DashBoardSlider></DashBoardSlider>,
       children: [
+        {
+          path: 'dashboard',
+          element: <DashBoard></DashBoard>
+        },
         {
           path: 'daily-calculation',
           element: <DailyCalculation></DailyCalculation>
