@@ -119,7 +119,13 @@ const DashBoardSlider = () => {
             <span className="tooltip">এমপ্লয়ী প্রোফাইল</span>
           </li> */}
 
-          
+          <li>
+            <Link to='employee-salary' className="a">
+              <i className="bx bx-pie-chart-alt-2"></i>
+              <span className="link_name">বেতন</span>
+            </Link>
+            <span className="tooltip">বেতন</span>
+          </li>
 
           <li>
             <Link to='dharAmount' className="a">
@@ -131,13 +137,7 @@ const DashBoardSlider = () => {
 
 
 
-          <li>
-            <Link className="a">
-              <i className="bx bx-pie-chart-alt-2"></i>
-              <span className="link_name">হিসাব</span>
-            </Link>
-            <span className="tooltip">হিসাব</span>
-          </li>
+          
 
 
 
