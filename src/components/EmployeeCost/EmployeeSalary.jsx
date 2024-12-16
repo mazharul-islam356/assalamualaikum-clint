@@ -220,7 +220,7 @@ const EmployeeSalary = () => {
       </form>
       <hr className="mt-5" />
 
-     <div className="flex items-center gap-10 justify-around">
+     <div className="flex items-start gap-10 justify-around">
 
       <div className="w-full">
       <div className="flex justify-center items-center gap-2 mt-10 mb-2">
@@ -293,10 +293,8 @@ const EmployeeSalary = () => {
       </Card>
       </div>
 
-
-
       {/* extra cost list */}
-      <div className="w-full">
+      <div className="w-full mb-5">
       <div className="flex justify-center items-center gap-2 mt-10 mb-2">
         <GoChecklist className="text-3xl" />
         <h2 className="text-2xl text-center font-semibold">আনুষঙ্গিক খরচ</h2>
