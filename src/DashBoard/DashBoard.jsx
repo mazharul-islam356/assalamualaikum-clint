@@ -1,9 +1,20 @@
-
 import { Box } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import { FiRefreshCw } from "react-icons/fi";
-import {  MdOutlineDashboard } from "react-icons/md";
+import { MdOutlineDashboard } from "react-icons/md";
+import useDailyCalculationData from "../hooks/useDailyCalculationData";
+import useDharAmountData from "../hooks/useDharAmountData";
+import useEmployeeCost from "../hooks/useEmployeeCost";
+import useEmployeeSalary from "../hooks/useEmployeeSalary";
+import useExtraCost from "../hooks/useExtraCost";
+import useMonthlyCostData from "../hooks/useMonthlyCostData";
+
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
+import { id } from "date-fns/locale/id";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const borrowersData = [
   { state: "QLD", amount: 18.6, color: "bg-red-500" },
@@ -12,124 +23,150 @@ const borrowersData = [
   { state: "VIC", amount: 0, color: "bg-gray-300" },
 ];
 
-
+const BengaliMonths = [
+  "জানুয়ারী", "ফেব্রুয়ারী", "মার্চ", "এপ্রিল", "মে", "জুন",
+  "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর",
+];
 
 const DashBoard = () => {
+  const [selectedMonth, setSelectedMonth] = useState("");
+  const [currentMonthName, setCurrentMonthName] = useState("");
 
+  // Initialize Current Month
+  useEffect(() => {
+    const date = new Date();
+    const monthName = date.toLocaleString("bn-BD", { month: "long" });
+    setCurrentMonthName(monthName);
+    setSelectedMonth(monthName);
+  }, []);
 
+  const [dailyCalculationData] = useDailyCalculationData();
+  const [dharAmountData] = useDharAmountData();
+  const [employeeCostData] = useEmployeeCost();
+  const [salaryCostData] = useEmployeeSalary();
+  const [extraCostData] = useExtraCost();
+  const [monthlyCostData] = useMonthlyCostData();
 
+  console.log("Daily Calculation Data:", dailyCalculationData);
 
+  // Filter and Sort Data
+  const filteredData = dailyCalculationData
+    .filter(({ formattedDate }) => {
+      if (!selectedMonth) return true;
+      const month = formattedDate.split(" ")[1].replace(",", "");
+      return month === selectedMonth;
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.formattedDate.split(" ").reverse().join("-"));
+      const dateB = new Date(b.formattedDate.split(" ").reverse().join("-"));
+      return dateA - dateB;
+    });
 
-  
-    return (
-        <div className="bg-gray-100 h-screen">
+  // Totals Calculation
+  const totals = filteredData.reduce(
+    (acc, curr) => {
+      acc.totalIncomeCash += curr.income_cash_int || 0;
+      acc.totalIncomeCard += curr.income_card_int || 0;
+      acc.totalCashExpenses += curr.cash_expenses_int || 0;
+      acc.totalNastaCost += curr.nasta_coast_int || 0;
+      return acc;
+    },
+    { totalIncomeCash: 0, totalIncomeCard: 0, totalCashExpenses: 0, totalNastaCost: 0 }
+  );
 
-           <div className="flex items-center gap-2 justify-center">
-           <MdOutlineDashboard className="text-3xl mt-10" />
-           <h1 className="font-bangla font-semibold text-2xl text-center mt-10">ড্যাশবোর্ড</h1>
-           </div>
-           <div>
+  const overallTotal =
+    totals.totalIncomeCash +
+    totals.totalIncomeCard -
+    totals.totalCashExpenses -
+    totals.totalNastaCost;
 
-      <div className="w-11/12 mx-auto grid grid-cols-2 items-start mt-10">
+  console.log(`${selectedMonth} Data:`, overallTotal);
 
-      <div className="bg-white shadow-lg rounded-lg min-h-[60vh] flex flex-col justify-center px-10">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-sm font-medium text-gray-600">Borrowers by State</h2>
-          
-        
+  // Doughnut Chart Data to Show Totals
+  const chartData = {
+    labels: ["Total Income (Cash + Card)", "Total Cash Expenses", "Total Nasta Cost"],
+    datasets: [
+      {
+        data: [
+          totals.totalIncomeCash + totals.totalIncomeCard,
+          totals.totalCashExpenses,
+          totals.totalNastaCost,
+        ],
+        backgroundColor: ["#4CAF50", "#FF6384", "#FFCE56"],
+        hoverOffset: 4,
+      },
+    ],
+  };
 
-        </div>
+  const options = {
 
-       <div className="flex items-center justify-between">
-         {/* Circular Progress Simulation */}
-      
+  }
 
-        {/* Borrowers by State */}
-        <div>
+  const textCenter ={
+    id: 'textCenter',
+    beforDatasetDraw(chart, args, pluginOption){
+      const {ctx,chartData} = chart;
+      ctx.save();
+      ctx.font = 'bolder 30px sans-serif';
+      ctx.fillStyle = 'red';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('text', chart.getDatasetMeta(0).data[0].x, chart.getDatasetMeta(0).data[0].y )
+    }
+  }
+
+  return (
+    <div className="bg-gray-100 h-screen">
+      {/* Header */}
+      <div className="flex items-center gap-2 justify-center">
+        <MdOutlineDashboard className="text-3xl mt-10" />
+        <h1 className="font-bangla font-semibold text-2xl text-center mt-10">ড্যাশবোর্ড</h1>
+      </div>
+
+      {/* Month Selector */}
+      <div className="flex justify-center mt-5">
+        <select
+          className="border border-gray-400 p-2 w-60 rounded-lg font-bangla"
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(e.target.value)}
+        >
+          <option disabled>-- মাস বাছাই করুন --</option>
+          {BengaliMonths.map((month) => (
+            <option key={month} value={month}>
+              {month}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Doughnut Chart */}
+      <div style={{width:'50%', height:'50%'}} className="flex justify-center mt-5">
+        <Doughnut options={options} plugins={[textCenter]} data={chartData} />
+      </div>
+
+      {/* Borrowers Section */}
+      <div className="w-11/12 mx-auto grid grid-cols-2 gap-5 mt-10">
+        <div className="bg-white shadow-lg rounded-lg p-5">
+          <h2 className="text-sm font-medium text-gray-600 mb-4">Borrowers by State</h2>
           {borrowersData.map((item, index) => (
-            <div key={index} className="flex items-center mb-2">
+            <div key={index} className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-2">
                 <span className={`w-2 h-2 rounded-full ${item.color}`}></span>
-                <span className="text-gray-600 text-sm">{item.state}...............</span>
+                <span className="text-gray-600 text-sm">{item.state}</span>
               </div>
-              <p className="text-gray-800 font-medium text-sm">
-               ........ ${item.amount}M
-              </p>
+              <p className="text-gray-800 font-medium text-sm">${item.amount}M</p>
             </div>
           ))}
         </div>
-       </div>
 
-      </div>
-
-      <div className="bg-gray-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-3xl p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">Current balance</h2>
-          <div className="flex gap-2">
-            <button className="p-2 rounded-full hover:bg-gray-100">
-              <BsArrowLeft className="w-5 h-5 text-gray-600" />
-            </button>
-            <button className="p-2 rounded-full hover:bg-gray-100">
-              <BsArrowRight className="w-5 h-5 text-gray-600" />
-            </button>
-          </div>
-        </div>
-
-        <div className="bg-[#C1F7CF] rounded-2xl p-6 relative">
-          <button className="absolute left-4 top-4 bg-white p-2 rounded-full">
-            <FiRefreshCw className="w-4 h-4 text-gray-600" />
-          </button>
-
-          <div className="mb-8">
-            <div className="flex items-center gap-1">
-              <span className="text-gray-700 font-medium">14%</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-gray-700">
-                <path d="M5 15l7-7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <p className="text-sm text-gray-600">Avg score: 18,324$</p>
-          </div>
-
-          <div className="relative flex justify-center">
-            <svg className="w-48 h-24" viewBox="0 0 192 96">
-              <path
-                d="M 8 88 A 84 84 0 0 1 184 88"
-                fill="none"
-                stroke="#000000"
-                strokeWidth="24"
-                strokeLinecap="round"
-              />
-              <path
-                d="M 184 88 A 84 84 0 0 1 160 40"
-                fill="none"
-                stroke="#E5E7EB"
-                strokeWidth="24"
-                strokeLinecap="round"
-              />
-              <circle cx="160" cy="40" r="4" fill="#6366F1" />
-            </svg>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-[-10%] text-center">
-              <p className="text-3xl font-bold text-gray-900">15,368$</p>
-            </div>
-          </div>
+        {/* Balance Section */}
+        <div className="bg-white shadow-lg rounded-lg p-5">
+          <h2 className="text-xl font-semibold mb-4">Current Balance</h2>
+          <p className="text-3xl font-bold">${overallTotal.toLocaleString()}</p>
         </div>
       </div>
     </div>
-
-      
-
-
-
-
-    </div>
-
-
-           </div>
-          
-        </div>
-    );
+  );
 };
 
 export default DashBoard;

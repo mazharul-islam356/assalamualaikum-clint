@@ -23,7 +23,7 @@ import useDailyCalculationData from "../../hooks/useDailyCalculationData";
 const TABLE_HEAD = ["তারিখ", "ক্যাশ এ আয়", "কার্ড এ আয়", "ক্যাশ থেকে খরচ", "নাস্তা", "টোটাল", ""];
 
 const BengaliMonths = [
-  "জানুয়ারী", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন",
+  "জানুয়ারী", "ফেব্রুয়ারী", "মার্চ", "এপ্রিল", "মে", "জুন",
   "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"
 ];
 
@@ -183,7 +183,7 @@ const totals = filteredData.reduce(
 );
 
 // Compute the overall balance
-const overallTotal =
+ const overallTotal =
   totals.totalIncomeCash +
   totals.totalIncomeCard -
   totals.totalCashExpenses -
