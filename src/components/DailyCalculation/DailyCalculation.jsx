@@ -103,7 +103,6 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
   }
 
   // get data
- 
   
 
     // delete data

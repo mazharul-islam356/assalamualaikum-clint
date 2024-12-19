@@ -1,7 +1,7 @@
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
-import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
-import { FiRefreshCw } from "react-icons/fi";
+import { BsArrowLeft, BsArrowRight, BsCalendar2 } from "react-icons/bs";
+import { FiMaximize2, FiMoreVertical, FiRefreshCw } from "react-icons/fi";
 import { MdOutlineDashboard } from "react-icons/md";
 import useDailyCalculationData from "../hooks/useDailyCalculationData";
 import useDharAmountData from "../hooks/useDharAmountData";
@@ -13,6 +13,7 @@ import useMonthlyCostData from "../hooks/useMonthlyCostData";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { id } from "date-fns/locale/id";
+import { Link } from "react-router-dom";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -24,8 +25,32 @@ const borrowersData = [
 ];
 
 const BengaliMonths = [
-  "জানুয়ারী", "ফেব্রুয়ারী", "মার্চ", "এপ্রিল", "মে", "জুন",
-  "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর",
+  "জানুয়ারী",
+  "ফেব্রুয়ারী",
+  "মার্চ",
+  "এপ্রিল",
+  "মে",
+  "জুন",
+  "জুলাই",
+  "আগস্ট",
+  "সেপ্টেম্বর",
+  "অক্টোবর",
+  "নভেম্বর",
+  "ডিসেম্বর",
+];
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 const DashBoard = () => {
@@ -46,7 +71,40 @@ const DashBoard = () => {
   const [salaryCostData] = useEmployeeSalary();
   const [extraCostData] = useExtraCost();
   const [monthlyCostData] = useMonthlyCostData();
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedMonth2, setSelectedMonth2] = useState();
 
+  console.log('extra cost dataaaaa',extraCostData);
+  const [totalCostAmount, setTotalCostAmount] = useState(0);
+
+  // Function to calculate the total cost for the selected month
+  useEffect(() => {
+    if (selectedMonth && extraCostData) {
+      const filteredCosts = extraCostData.filter(
+        (item) => item.selectedMonth2 === selectedMonth
+      );
+      const total = filteredCosts.reduce(
+        (sum, item) => sum + (item.costAmount || 0),
+        0
+      );
+      setTotalCostAmount(total);
+    }
+  }, [selectedMonth, extraCostData]);
+  const handleIconClick = () => {
+    setIsOpen(!isOpen);
+  };
+
+ 
+  const selectedMonthData = monthlyCostData?.find(
+    (data) => data.selectedMonth === selectedMonth
+  );
+  const monthlyTotal = selectedMonthData?.total || null;
+
+
+  const handleMonthSelect = (value) => {
+    setSelectedMonth2(value);
+    setIsOpen(false);
+  };
   console.log("Daily Calculation Data:", dailyCalculationData);
 
   // Filter and Sort Data
@@ -71,7 +129,12 @@ const DashBoard = () => {
       acc.totalNastaCost += curr.nasta_coast_int || 0;
       return acc;
     },
-    { totalIncomeCash: 0, totalIncomeCard: 0, totalCashExpenses: 0, totalNastaCost: 0 }
+    {
+      totalIncomeCash: 0,
+      totalIncomeCard: 0,
+      totalCashExpenses: 0,
+      totalNastaCost: 0,
+    }
   );
 
   const overallTotal =
@@ -84,7 +147,7 @@ const DashBoard = () => {
 
   // Doughnut Chart Data to Show Totals
   const chartData = {
-    labels: ["Total Income (Cash + Card)", "Total Cash Expenses", "Total Nasta Cost"],
+    labels: [],
     datasets: [
       {
         data: [
@@ -98,29 +161,18 @@ const DashBoard = () => {
     ],
   };
 
-  const options = {
+  const options = {};
 
-  }
-
-  const textCenter ={
-    id: 'textCenter',
-    beforDatasetDraw(chart, args, pluginOption){
-      const {ctx,chartData} = chart;
-      ctx.save();
-      ctx.font = 'bolder 30px sans-serif';
-      ctx.fillStyle = 'red';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('text', chart.getDatasetMeta(0).data[0].x, chart.getDatasetMeta(0).data[0].y )
-    }
-  }
+  console.log(totalCostAmount);
 
   return (
     <div className="bg-gray-100 h-screen">
       {/* Header */}
       <div className="flex items-center gap-2 justify-center">
         <MdOutlineDashboard className="text-3xl mt-10" />
-        <h1 className="font-bangla font-semibold text-2xl text-center mt-10">ড্যাশবোর্ড</h1>
+        <h1 className="font-bangla font-semibold text-2xl text-center mt-10">
+          ড্যাশবোর্ড
+        </h1>
       </div>
 
       {/* Month Selector */}
@@ -139,29 +191,101 @@ const DashBoard = () => {
         </select>
       </div>
 
-      {/* Doughnut Chart */}
-      <div style={{width:'50%', height:'50%'}} className="flex justify-center mt-5">
-        <Doughnut options={options} plugins={[textCenter]} data={chartData} />
-      </div>
-
       {/* Borrowers Section */}
       <div className="w-11/12 mx-auto grid grid-cols-2 gap-5 mt-10">
-        <div className="bg-white shadow-lg rounded-lg p-5">
-          <h2 className="text-sm font-medium text-gray-600 mb-4">Borrowers by State</h2>
-          {borrowersData.map((item, index) => (
-            <div key={index} className="flex justify-between items-center mb-2">
-              <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${item.color}`}></span>
-                <span className="text-gray-600 text-sm">{item.state}</span>
+        <div>
+          <div className="bg-white shadow-lg rounded-xl p-5">
+            <div className="flex justify-between items-center mb-8 px-4 pt-5">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Borrowers by State
+              </h2>
+              <div className="flex gap-2">
+                <button onClick={handleIconClick} className="h-8 w-8">
+                  <BsCalendar2 className="h-4 w-4" />
+                </button>
+
+                {isOpen && (
+                  <div className="absolute mt-6">
+                    <select
+                      className="w-full p-2 border rounded"
+                      value={selectedMonth2 || ""}
+                      onChange={(e) => handleMonthSelect(e.target.value)}
+                    >
+                      <option value="" disabled>
+                        Select a month
+                      </option>
+                      {months.map((month) => (
+                        <option key={month} value={month}>
+                          {month}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
-              <p className="text-gray-800 font-medium text-sm">${item.amount}M</p>
             </div>
-          ))}
+
+            <div className="flex justify-between items-center mb-2 px-10 pb-5">
+              {/* Doughnut Chart */}
+              <div
+                style={{ width: "40%", height: "40%" }}
+                className="flex justify-center mt-5"
+              >
+                <Doughnut options={options} data={chartData} />
+              </div>
+              <div>
+                
+
+                <div className="flex gap-10 items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`w-2 h-2 rounded-full bg-red-400`}
+                    ></span>
+                    <span className="text-gray-600 text-sm">Extra Cost</span>
+                  </div>
+                  <p className="text-gray-800 font-medium text-sm"> {totalCostAmount !== 0 ? (
+                      <p className="text-sm font-bold">
+                        {totalCostAmount.toLocaleString("bn-BD")} ৳
+                      </p>
+                    ) : (
+                      <p className="text-sm font-medium text-red-500">
+                        No available data
+                      </p>
+                    )}</p>
+                </div>
+
+                <div className="flex gap-10 items-center mt-1">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`w-2 h-2 rounded-full bg-green-400`}
+                    ></span>
+                    <span className="text-gray-600 text-sm">Monthly Cost</span>
+                  </div>
+                  <p className="text-gray-800 font-medium text-sm"> {monthlyTotal !== null ? (
+                      <p className="text-sm font-bold">
+                        {monthlyTotal.toLocaleString("bn-BD")} ৳
+                      </p>
+                    ) : (
+                      <p className="text-sm font-medium text-red-500">
+                        No available data
+                      </p>
+                    )}</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Balance Section */}
         <div className="bg-white shadow-lg rounded-lg p-5">
           <h2 className="text-xl font-semibold mb-4">Current Balance</h2>
+
+          <div>
+  <h2 className="text-xl font-semibold mb-4">Extra Costs for {selectedMonth}</h2>
+  <p className="text-3xl font-bold">
+    {totalCostAmount.toLocaleString("bn-BD")} ৳
+  </p>
+</div>
           <p className="text-3xl font-bold">${overallTotal.toLocaleString()}</p>
         </div>
       </div>
