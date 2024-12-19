@@ -37,7 +37,7 @@ const TABLE_ROWS = [
 
 const MonthlyCost = () => {
   const [open, setOpen] = useState(false);
-  const [selectedMonth, setSelectedMonth] = useState("");
+  const [monthlyCostSelectedMonth, setSelectedMonth] = useState("");
   const handleModalOpen = () => setOpen(!open);
 
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -82,7 +82,7 @@ const MonthlyCost = () => {
   const [inputPairs, setInputPairs] = useState([{ id: 1, product: "", price: "" }])
   const [total, setTotal] = useState(0)
   console.log(inputPairs,total);
-  const monthlyCostData = {selectedMonth,inputPairs,total,formattedDate,formattedTime}
+  const monthlyCostData = {monthlyCostSelectedMonth,inputPairs,total,formattedDate,formattedTime}
 
   // handle add or remove input
   useEffect(() => {
@@ -133,7 +133,7 @@ const MonthlyCost = () => {
           setSelectedMonth("");
           setInputPairs([{ id: 1, product: "", price: "" }]);
           setTotal(0);
-          toast.success(`${selectedMonth} মাসের এককালীন খরচ যুক্ত করা হয়েছে`);
+          toast.success(`${monthlyCostSelectedMonth} মাসের এককালীন খরচ যুক্ত করা হয়েছে`);
         }
        
       })
@@ -210,7 +210,7 @@ console.log('dataaaaa',monthlyCoastData);
           <select
           required
             id="month-select"
-            value={selectedMonth}
+            value={monthlyCostSelectedMonth}
             onChange={handleMonthChange}
             className="lg:block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
           >
@@ -226,11 +226,14 @@ console.log('dataaaaa',monthlyCoastData);
             <option value="জুলাই">জুলাই</option>
             <option value="আগস্ট">আগস্ট</option>
             <option value="সেপ্টেম্বর">সেপ্টেম্বর</option>
+            <option value="অক্টোবর">অক্টোবর</option>
+              <option value="নভেম্বর">নভেম্বর</option>
+              <option value="ডিসেম্বর">ডিসেম্বর</option>
           </select>
 
-          {selectedMonth && (
+          {monthlyCostSelectedMonth && (
             <p className="mt-4 text-lg font-bangla">
-              নির্বাচিত মাস: <strong>{selectedMonth}</strong>
+              নির্বাচিত মাস: <strong>{monthlyCostSelectedMonth}</strong>
             </p>
           )}
         </div>
@@ -337,7 +340,7 @@ console.log('dataaaaa',monthlyCoastData);
               </tr>
             </thead>
             <tbody>
-              {monthlyCoastData.map(({ selectedMonth, _id, total }, index) => {
+              {monthlyCoastData.map(({ monthlyCostSelectedMonth, _id, total }, index) => {
                 const isLast = index === TABLE_ROWS.length - 1;
                 const classes = isLast
                   ? "p-4"
@@ -360,7 +363,7 @@ console.log('dataaaaa',monthlyCoastData);
                         color="blue-gray"
                         className="font-normal text-center font-bangla"
                       >
-                        {selectedMonth}
+                        {monthlyCostSelectedMonth}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -404,7 +407,7 @@ console.log('dataaaaa',monthlyCoastData);
             selectedData && (
               <div className="flex gap-3 text-gray-800 font-semibold">
            <h4 className="text-xl">মাসের নাম:</h4>
-           <span className="text-gray-600">{selectedData.selectedMonth}</span>
+           <span className="text-gray-600">{selectedData.monthlyCostSelectedMonth}</span>
            </div>
             )
           }

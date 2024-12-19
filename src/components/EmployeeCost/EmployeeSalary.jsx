@@ -6,11 +6,13 @@ import useEmployeeSalary from "../../hooks/useEmployeeSalary";
 import toast from "react-hot-toast";
 import { GoChecklist } from "react-icons/go";
 import useExtraCost from "../../hooks/useExtraCost";
+import { GrMoney } from "react-icons/gr";
+
 
 const TABLE_HEAD = ["নাম", "পরিমাণ", "মাস"];
 
 const EmployeeSalary = () => {
-  const [selectedMonth, setSelectedMonth] = useState("");
+  const [salarySelectedMonth, setSelectedMonth] = useState("");
   const [selectedMonth2, setSelectedMonth2] = useState("");
 
   const handleMonthChange = (event) => {
@@ -29,7 +31,7 @@ const EmployeeSalary = () => {
     const salaryCostString = form.amount.value;
     const salaryCost = parseInt(salaryCostString);
 
-    const employeeSalary = { employee_name, salaryCost, selectedMonth };
+    const employeeSalary = { employee_name, salaryCost, salarySelectedMonth };
 
     axiosSecure
       .post("/salary", employeeSalary)
@@ -76,7 +78,7 @@ const EmployeeSalary = () => {
     <div className="w-11/12 mx-auto">
       <div className="flex items-center justify-center gap-1 mt-10">
         <FaCommentsDollar className="text-2xl"></FaCommentsDollar>
-        <h3 className="font-semibold text-2xl ">বেতন ও আনুষঙ্গিক খরচ</h3>
+        <h3 className="font-semibold text-2xl ">বেতন</h3>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -89,7 +91,7 @@ const EmployeeSalary = () => {
             <select
               required
               id="month-select"
-              value={selectedMonth}
+              value={salarySelectedMonth}
               onChange={handleMonthChange}
               className="lg:block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
             >
@@ -105,6 +107,9 @@ const EmployeeSalary = () => {
               <option value="জুলাই">জুলাই</option>
               <option value="আগস্ট">আগস্ট</option>
               <option value="সেপ্টেম্বর">সেপ্টেম্বর</option>
+              <option value="অক্টোবর">অক্টোবর</option>
+              <option value="নভেম্বর">নভেম্বর</option>
+              <option value="ডিসেম্বর">ডিসেম্বর</option>
             </select>
 
           
@@ -153,7 +158,12 @@ const EmployeeSalary = () => {
 
             {/* extra cost */}
       <form onSubmit={handleSubmit2}>
+        <div className="flex items-center justify-center gap-1 mt-10">
+        <GrMoney   className="text-2xl"></GrMoney>
+        <h3 className="font-semibold text-2xl ">আনুষঙ্গিক খরচ</h3>
+      </div>
         <div className="grid grid-cols-3 justify-center items-center justify-items-center mt-8">
+
           {/* month select */}
           <div className="w-64">
             <Typography className="mb-1 mt-4 font-bangla" variant="h6">
@@ -178,6 +188,9 @@ const EmployeeSalary = () => {
               <option value="জুলাই">জুলাই</option>
               <option value="আগস্ট">আগস্ট</option>
               <option value="সেপ্টেম্বর">সেপ্টেম্বর</option>
+              <option value="অক্টোবর">অক্টোবর</option>
+              <option value="নভেম্বর">নভেম্বর</option>
+              <option value="ডিসেম্বর">ডিসেম্বর</option>
             </select>
 
           
@@ -249,7 +262,7 @@ const EmployeeSalary = () => {
           </thead>
           <tbody>
             {salaryCoastData.map(
-              ({ employee_name, salaryCost, selectedMonth }, index) => {
+              ({ employee_name, salaryCost, salarySelectedMonth }, index) => {
                 const isLast = index === salaryCoastData.length - 1;
                 const classes = isLast
                   ? "p-4"
@@ -281,7 +294,7 @@ const EmployeeSalary = () => {
                         color="blue-gray"
                         className="font-normal font-bangla text-center"
                       >
-                        {selectedMonth}
+                        {salarySelectedMonth}
                       </Typography>
                     </td>
                   </tr>
@@ -295,7 +308,7 @@ const EmployeeSalary = () => {
 
       {/* extra cost list */}
       <div className="w-full mb-5">
-      <div className="flex justify-center items-center gap-2 mt-10 mb-2">
+      <div className="flex justify-center items-center gap-3 mt-10 mb-2">
         <GoChecklist className="text-3xl" />
         <h2 className="text-2xl text-center font-semibold">আনুষঙ্গিক খরচ</h2>
       </div>

@@ -73,11 +73,12 @@ const DashBoard = () => {
   const [monthlyCostData] = useMonthlyCostData();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedMonth2, setSelectedMonth2] = useState();
-
-  console.log('extra cost dataaaaa',extraCostData);
   const [totalCostAmount, setTotalCostAmount] = useState(0);
+  const [totalmonthlyCost, setTotalMonthlyCost] = useState(0);
 
-  // Function to calculate the total cost for the selected month
+  console.log('salary cost dataaaaa',salaryCostData);
+
+  // ----extra cost-----
   useEffect(() => {
     if (selectedMonth && extraCostData) {
       const filteredCosts = extraCostData.filter(
@@ -90,10 +91,26 @@ const DashBoard = () => {
       setTotalCostAmount(total);
     }
   }, [selectedMonth, extraCostData]);
+
+  // ----monthly cost-----
+  useEffect(() => {
+    if (selectedMonth && monthlyCostData) {
+      const filteredMonthlyCosts = monthlyCostData.filter(
+        (item) => item.monthlyCostSelectedMonth === selectedMonth
+      );
+      const monthlyTotal = filteredMonthlyCosts.reduce(
+        (sum, item) => sum + (item.total || 0),
+        0
+      );
+      setTotalMonthlyCost(monthlyTotal);
+    }
+  }, [selectedMonth, monthlyCostData]);
+
+
+
   const handleIconClick = () => {
     setIsOpen(!isOpen);
   };
-
  
   const selectedMonthData = monthlyCostData?.find(
     (data) => data.selectedMonth === selectedMonth
@@ -163,7 +180,7 @@ const DashBoard = () => {
 
   const options = {};
 
-  console.log(totalCostAmount);
+  console.log('total monthly cost dataaaa',totalmonthlyCost);
 
   return (
     <div className="bg-gray-100 h-screen">
@@ -261,9 +278,9 @@ const DashBoard = () => {
                     ></span>
                     <span className="text-gray-600 text-sm">Monthly Cost</span>
                   </div>
-                  <p className="text-gray-800 font-medium text-sm"> {monthlyTotal !== null ? (
+                  <p className="text-gray-800 font-medium text-sm"> {totalmonthlyCost !== 0 ? (
                       <p className="text-sm font-bold">
-                        {monthlyTotal.toLocaleString("bn-BD")} ৳
+                        {totalmonthlyCost.toLocaleString("bn-BD")} ৳
                       </p>
                     ) : (
                       <p className="text-sm font-medium text-red-500">
