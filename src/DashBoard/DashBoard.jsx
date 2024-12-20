@@ -1,28 +1,16 @@
-import { Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
-import { BsArrowLeft, BsArrowRight, BsCalendar2 } from "react-icons/bs";
-import { FiMaximize2, FiMoreVertical, FiRefreshCw } from "react-icons/fi";
+import { BsCalendar2 } from "react-icons/bs";
 import { MdOutlineDashboard } from "react-icons/md";
 import useDailyCalculationData from "../hooks/useDailyCalculationData";
-import useDharAmountData from "../hooks/useDharAmountData";
-import useEmployeeCost from "../hooks/useEmployeeCost";
 import useEmployeeSalary from "../hooks/useEmployeeSalary";
 import useExtraCost from "../hooks/useExtraCost";
 import useMonthlyCostData from "../hooks/useMonthlyCostData";
-
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import { id } from "date-fns/locale/id";
-import { Link } from "react-router-dom";
+
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const borrowersData = [
-  { state: "QLD", amount: 18.6, color: "bg-red-500" },
-  { state: "SA", amount: 3.9, color: "bg-orange-400" },
-  { state: "WA", amount: 3.2, color: "bg-green-400" },
-  { state: "VIC", amount: 0, color: "bg-gray-300" },
-];
 
 const BengaliMonths = [
   "জানুয়ারী",
@@ -54,6 +42,7 @@ const months = [
 ];
 
 const DashBoard = () => {
+
   const [selectedMonth, setSelectedMonth] = useState("");
   const [currentMonthName, setCurrentMonthName] = useState("");
 
@@ -65,9 +54,8 @@ const DashBoard = () => {
     setSelectedMonth(monthName);
   }, []);
 
+  const [totalExpensesValue, setTotalExpensesValue] = useState(0);
   const [dailyCalculationData] = useDailyCalculationData();
-  const [dharAmountData] = useDharAmountData();
-  const [employeeCostData] = useEmployeeCost();
   const [salaryCostData] = useEmployeeSalary();
   const [extraCostData] = useExtraCost();
   const [monthlyCostData] = useMonthlyCostData();
@@ -75,8 +63,9 @@ const DashBoard = () => {
   const [selectedMonth2, setSelectedMonth2] = useState();
   const [totalCostAmount, setTotalCostAmount] = useState(0);
   const [totalmonthlyCost, setTotalMonthlyCost] = useState(0);
+  const [totalSalaryCost, setTotalSalaryCost] = useState(0);
 
-  console.log('salary cost dataaaaa',salaryCostData);
+  // console.log('salary cost dataaaaa',salaryCostData);
 
   // ----extra cost-----
   useEffect(() => {
@@ -92,7 +81,8 @@ const DashBoard = () => {
     }
   }, [selectedMonth, extraCostData]);
 
-  // ----monthly cost-----
+
+  // ----monthly ek kalin cost-----
   useEffect(() => {
     if (selectedMonth && monthlyCostData) {
       const filteredMonthlyCosts = monthlyCostData.filter(
@@ -105,6 +95,21 @@ const DashBoard = () => {
       setTotalMonthlyCost(monthlyTotal);
     }
   }, [selectedMonth, monthlyCostData]);
+
+
+  // ----salary cost-----
+  useEffect(() => {
+    if (selectedMonth && salaryCostData) {
+      const filteredSalaryCosts = salaryCostData.filter(
+        (item) => item.salarySelectedMonth === selectedMonth
+      );
+      const salaryTotal = filteredSalaryCosts.reduce(
+        (sum, item) => sum + (item.salaryCost || 0),
+        0
+      );
+      setTotalSalaryCost(salaryTotal);
+    }
+  }, [selectedMonth, salaryCostData]);
 
 
 
@@ -122,7 +127,7 @@ const DashBoard = () => {
     setSelectedMonth2(value);
     setIsOpen(false);
   };
-  console.log("Daily Calculation Data:", dailyCalculationData);
+
 
   // Filter and Sort Data
   const filteredData = dailyCalculationData
@@ -137,6 +142,7 @@ const DashBoard = () => {
       return dateA - dateB;
     });
 
+    
   // Totals Calculation
   const totals = filteredData.reduce(
     (acc, curr) => {
@@ -162,17 +168,35 @@ const DashBoard = () => {
 
   console.log(`${selectedMonth} Data:`, overallTotal);
 
+  // total nasta cost and cash expense value
+  useEffect(() => {
+    const totalExpenses = filteredData.reduce(
+      (acc, curr) => {
+        acc.totalCashExpenses += curr.cash_expenses_int || 0;
+        acc.totalNastaCost += curr.nasta_coast_int || 0;
+        return acc;
+      },
+      {
+        totalCashExpenses: 0,
+        totalNastaCost: 0,
+      }
+    );
+
+    setTotalExpensesValue(totalExpenses.totalCashExpenses + totalExpenses.totalNastaCost);
+  }, [filteredData]);
+
   // Doughnut Chart Data to Show Totals
   const chartData = {
     labels: [],
     datasets: [
       {
         data: [
-          totals.totalIncomeCash + totals.totalIncomeCard,
-          totals.totalCashExpenses,
-          totals.totalNastaCost,
+          totalExpensesValue,
+          totalmonthlyCost,
+          totalCostAmount,
+          totalSalaryCost
         ],
-        backgroundColor: ["#4CAF50", "#FF6384", "#FFCE56"],
+        backgroundColor: ["#936639", "#ffb703", "#83c5be", "#dd0f00"],
         hoverOffset: 4,
       },
     ],
@@ -252,11 +276,49 @@ const DashBoard = () => {
               </div>
               <div>
                 
-
+                {/* monthly nasta and cash expense total */}
                 <div className="flex gap-10 items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`w-2 h-2 rounded-full bg-red-400`}
+                      className={`w-2 h-2 rounded-full bg-[#936639]`}
+                    ></span>
+                    <span className="text-gray-600 text-sm">Monthly Cost</span>
+                  </div>
+                  <p className="text-gray-800 font-medium text-sm"> {totalExpensesValue !== 0 ? (
+                      <p className="text-sm font-bold">
+                        {totalExpensesValue.toLocaleString("bn-BD")} ৳
+                      </p>
+                    ) : (
+                      <p className="text-sm font-medium text-red-500">
+                        No available data
+                      </p>
+                    )}</p>
+                </div>
+
+                   {/* ek kalin cost */}
+                   <div className="flex gap-10 items-center justify-between  mt-1">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`w-2 h-2 rounded-full bg-orange-400`}
+                    ></span>
+                    <span className="text-gray-600 text-sm">Ekkalin Cost</span>
+                  </div>
+                  <p className="text-gray-800 font-medium text-sm"> {totalmonthlyCost !== 0 ? (
+                      <p className="text-sm font-bold">
+                        {totalmonthlyCost.toLocaleString("bn-BD")} ৳
+                      </p>
+                    ) : (
+                      <p className="text-sm font-medium text-red-500">
+                        No available data
+                      </p>
+                    )}</p>
+                </div>
+
+                    {/* extra cost */}
+                <div className="flex gap-10 items-center justify-between mt-1">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`w-2 h-2 rounded-full bg-[#83c5be]`}
                     ></span>
                     <span className="text-gray-600 text-sm">Extra Cost</span>
                   </div>
@@ -271,16 +333,20 @@ const DashBoard = () => {
                     )}</p>
                 </div>
 
-                <div className="flex gap-10 items-center mt-1">
+                 
+
+
+                  {/* salary total */}
+                  <div className="flex gap-10 items-center justify-between mt-1">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`w-2 h-2 rounded-full bg-green-400`}
+                      className={`w-2 h-2 rounded-full bg-[#dd0f00]`}
                     ></span>
-                    <span className="text-gray-600 text-sm">Monthly Cost</span>
+                    <span className="text-gray-600 text-sm">Salary Cost</span>
                   </div>
-                  <p className="text-gray-800 font-medium text-sm"> {totalmonthlyCost !== 0 ? (
+                  <p className="text-gray-800 font-medium text-sm"> {totalSalaryCost !== 0 ? (
                       <p className="text-sm font-bold">
-                        {totalmonthlyCost.toLocaleString("bn-BD")} ৳
+                        {totalSalaryCost.toLocaleString("bn-BD")} ৳
                       </p>
                     ) : (
                       <p className="text-sm font-medium text-red-500">
@@ -302,6 +368,7 @@ const DashBoard = () => {
   <p className="text-3xl font-bold">
     {totalCostAmount.toLocaleString("bn-BD")} ৳
   </p>
+
 </div>
           <p className="text-3xl font-bold">${overallTotal.toLocaleString()}</p>
         </div>

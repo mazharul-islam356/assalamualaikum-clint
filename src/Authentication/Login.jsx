@@ -41,7 +41,7 @@ const Login = () => {
       </CardFooter>
     </Card>
 
-            <Link to='/dashBoard'>
+            <Link to='/dashBoard/dashboard'>
             <Button>
                 DashBoard
             </Button>
