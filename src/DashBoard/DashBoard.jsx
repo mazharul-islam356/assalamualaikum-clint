@@ -239,60 +239,49 @@ const DashBoard = () => {
         </select>
       </div>
 
-      {/* Borrowers Section */}
-      <div className="w-11/12 mx-auto grid grid-cols-2 gap-5 mt-10">
+      
+      <div className="w-11/12 mx-auto grid lg:grid-cols-2 gap-16 lg:gap-5 mt-10">
+
+      {/* expense Section */}
         <div>
-          <div className="bg-white shadow-lg rounded-xl p-5">
+          <div className="bg-white rounded-3xl p-5 border border-gray-200">
             <div className="flex justify-between items-center mb-8 px-4 pt-5">
+              
               <h2 className="text-lg font-semibold text-gray-900">
-                Borrowers by State
+              Total Expense
               </h2>
+
               <div className="flex gap-2">
-                <button onClick={handleIconClick} className="h-8 w-8">
+                <button className="h-8 w-8">
                   <BsCalendar2 className="h-4 w-4" />
                 </button>
-
-                {isOpen && (
-                  <div className="absolute mt-6">
-                    <select
-                      className="w-full p-2 border rounded"
-                      value={selectedMonth2 || ""}
-                      onChange={(e) => handleMonthSelect(e.target.value)}
-                    >
-                      <option value="" disabled>
-                        Select a month
-                      </option>
-                      {months.map((month) => (
-                        <option key={month} value={month}>
-                          {month}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
               </div>
+
             </div>
 
-            <div className="flex justify-between items-center mb-2 px-10 pb-5">
+            <div className="lg:flex lg:justify-between items-center mb-2 px-10 pb-5">
+
               {/* Doughnut Chart */}
-              <div
-                style={{ width: "40%", height: "40%" }}
-                className="flex justify-center mt-5"
-              >
-                <Doughnut options={options} data={chartData} />
-              </div>
               <div>
-                
+                <div className="mb-4 lg:mb-0">
+                <Doughnut className="lg:w-[50%] w-[20%]" options={options} data={chartData} />
+                </div>
+
+                <div></div>
+              </div>
+
+
+            <div>   
                 {/* monthly nasta and cash expense total */}
-                <div className="flex gap-10 items-center justify-between">
+                <div className="flex lg:gap-16 items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`w-2 h-2 rounded-full bg-[#936639]`}
+                      className={`w-3 h-3 rounded-full bg-[#936639]`}
                     ></span>
-                    <span className="text-gray-600 text-sm">Monthly Cost</span>
+                    <span className="lg:text-lg">মাসিক খরচ -</span>
                   </div>
-                  <p className="text-gray-800 font-medium text-sm"> {totalExpensesValue !== 0 ? (
-                      <p className="text-sm font-bold">
+                  <p className="text-gray-800 font-medium"> {totalExpensesValue !== 0 ? (
+                      <p className="text-lg font-bold">
                         {totalExpensesValue.toLocaleString("bn-BD")} ৳
                       </p>
                     ) : (
@@ -303,15 +292,15 @@ const DashBoard = () => {
                 </div>
 
                    {/* ek kalin cost */}
-                   <div className="flex gap-10 items-center justify-between  mt-1">
+                   <div className="flex lg:gap-16 items-center justify-between  mt-2">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`w-2 h-2 rounded-full bg-orange-400`}
+                      className={`w-3 h-3 rounded-full bg-orange-400`}
                     ></span>
-                    <span className="text-gray-600 text-sm">Ekkalin Cost</span>
+                    <span className="lg:text-lg">এককালীন খরচ -</span>
                   </div>
-                  <p className="text-gray-800 font-medium text-sm"> {totalmonthlyCost !== 0 ? (
-                      <p className="text-sm font-bold">
+                  <p className="text-gray-800 font-medium"> {totalmonthlyCost !== 0 ? (
+                      <p className="text-lg font-bold">
                         {totalmonthlyCost.toLocaleString("bn-BD")} ৳
                       </p>
                     ) : (
@@ -322,15 +311,15 @@ const DashBoard = () => {
                 </div>
 
                     {/* extra cost */}
-                <div className="flex gap-10 items-center justify-between mt-1">
+                <div className="flex lg:gap-16 items-center justify-between mt-2">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`w-2 h-2 rounded-full bg-[#83c5be]`}
+                      className={`w-3 h-3 rounded-full bg-[#83c5be]`}
                     ></span>
-                    <span className="text-gray-600 text-sm">Extra Cost</span>
+                    <span className="lg:text-lg">অতিরিক্ত খরচ - </span>
                   </div>
-                  <p className="text-gray-800 font-medium text-sm"> {totalCostAmount !== 0 ? (
-                      <p className="text-sm font-bold">
+                  <p className="text-gray-800 font-medium"> {totalCostAmount !== 0 ? (
+                      <p className="text-lg font-bold">
                         {totalCostAmount.toLocaleString("bn-BD")} ৳
                       </p>
                     ) : (
@@ -344,15 +333,15 @@ const DashBoard = () => {
 
 
                   {/* salary total */}
-                  <div className="flex gap-10 items-center justify-between mt-1">
+                  <div className="flex lg:gap-16 items-center justify-between mt-2">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`w-2 h-2 rounded-full bg-[#dd0f00]`}
+                      className={`w-3 h-3 rounded-full bg-[#dd0f00]`}
                     ></span>
-                    <span className="text-gray-600 text-sm">Salary Cost</span>
+                    <span className="lg:text-lg">বেতন বাবদ -</span>
                   </div>
-                  <p className="text-gray-800 font-medium text-sm"> {totalSalaryCost !== 0 ? (
-                      <p className="text-sm font-bold">
+                  <p className="text-gray-800 font-medium"> {totalSalaryCost !== 0 ? (
+                      <p className="text-lg font-bold">
                         {totalSalaryCost.toLocaleString("bn-BD")} ৳
                       </p>
                     ) : (
@@ -366,12 +355,14 @@ const DashBoard = () => {
           </div>
         </div>
 
-        {/* Balance Section */}
+
+
+        {/* -------income Section-------- */}
         <div className="w-11/12 mx-auto">
 
-          <div className="grid grid-cols-2 justify-between items-center justify-items-center">
+          <div className="lg:flex lg:justify-between justify-items-center items-center">
 
-          <div className="bg-[#248277] text-white h-52 w-60 rounded-3xl p-4">
+          <div className="bg-[#248277] text-white h-52 w-64 rounded-3xl p-4">
             <div className="flex flex-col justify-start">
             <div className="flex justify-between items-center text-start text-sm font-thin pt-0.5">
 
@@ -388,15 +379,12 @@ const DashBoard = () => {
             
              <div className="flex justify-center items-center mr-10 mt-4">
              <Barchart></Barchart>
-             </div>
-            
-
-            
+             </div>      
 
           </div>
 
           {/* card income box */}
-          <div className="bg-[#2dc653] h-52 w-60 rounded-3xl p-4">
+          <div className="bg-[#2dc653] h-52 w-64 rounded-3xl p-4 lg:mt-0 mt-4">
             <div className="flex flex-col justify-start">
             <div className="flex justify-between items-center text-start text-sm font-thin pt-0.5 text-white">
 
@@ -424,7 +412,8 @@ const DashBoard = () => {
 
           </div>
 
-          <div className="bg-red-500 mt-5 h-40 rounded-3xl">
+          {/* total profit dashboard */}
+          <div className="bg-[#74a69a] mt-6 h-44 rounded-3xl">
             total profit
           </div>
           
