@@ -10,3 +10,8 @@
 .font-bangla{
     font-family: 'AdorshoLipi', sans-serif;
 }
+@layer base {
+  :root {
+        --radius: 0.5rem;
+    }
+}

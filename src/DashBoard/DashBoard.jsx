@@ -7,6 +7,10 @@ import useExtraCost from "../hooks/useExtraCost";
 import useMonthlyCostData from "../hooks/useMonthlyCostData";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import Barchart from "./Chart/Barchart";
+import { HiTrendingUp } from "react-icons/hi";
+import CardIncomeChart from "./Chart/CardIncomeChart";
+
 
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -185,6 +189,9 @@ const DashBoard = () => {
     setTotalExpensesValue(totalExpenses.totalCashExpenses + totalExpenses.totalNastaCost);
   }, [filteredData]);
 
+
+
+
   // Doughnut Chart Data to Show Totals
   const chartData = {
     labels: [],
@@ -360,19 +367,73 @@ const DashBoard = () => {
         </div>
 
         {/* Balance Section */}
-        <div className="bg-white shadow-lg rounded-lg p-5">
-          <h2 className="text-xl font-semibold mb-4">Current Balance</h2>
+        <div className="w-11/12 mx-auto">
 
-          <div>
-  <h2 className="text-xl font-semibold mb-4">Extra Costs for {selectedMonth}</h2>
-  <p className="text-3xl font-bold">
-    {totalCostAmount.toLocaleString("bn-BD")} ৳
-  </p>
+          <div className="grid grid-cols-2 justify-between items-center justify-items-center">
 
-</div>
-          <p className="text-3xl font-bold">${overallTotal.toLocaleString()}</p>
+          <div className="bg-[#248277] text-white h-52 w-60 rounded-3xl p-4">
+            <div className="flex flex-col justify-start">
+            <div className="flex justify-between items-center text-start text-sm font-thin pt-0.5">
+
+              <h1>Cash Income</h1>
+              <HiTrendingUp className="text-xl"></HiTrendingUp>
+
+            </div>
+
+            <h2 className="text-4xl font-semibold">
+              30000
+            </h2>
+            </div>
+
+            
+             <div className="flex justify-center items-center mr-10 mt-4">
+             <Barchart></Barchart>
+             </div>
+            
+
+            
+
+          </div>
+
+          {/* card income box */}
+          <div className="bg-[#2dc653] h-52 w-60 rounded-3xl p-4">
+            <div className="flex flex-col justify-start">
+            <div className="flex justify-between items-center text-start text-sm font-thin pt-0.5 text-white">
+
+              <h1>Card Income</h1>
+              <HiTrendingUp className="text-xl"></HiTrendingUp>
+
+            </div>
+
+            <h2 className="text-4xl text-white font-semibold">
+              86024
+            </h2>
+            </div>
+
+            
+             <div className="flex justify-center items-center mt-4">
+             <CardIncomeChart></CardIncomeChart>
+             </div>
+            
+
+            
+
+          </div>
+
+         
+
+          </div>
+
+          <div className="bg-red-500 mt-5 h-40 rounded-3xl">
+            total profit
+          </div>
+          
         </div>
+
+
       </div>
+
+      
     </div>
   );
 };
