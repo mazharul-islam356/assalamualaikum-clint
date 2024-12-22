@@ -10,6 +10,8 @@ import { Doughnut } from "react-chartjs-2";
 import Barchart from "./Chart/Barchart";
 import { HiTrendingUp } from "react-icons/hi";
 import CardIncomeChart from "./Chart/CardIncomeChart";
+import toast from "react-hot-toast";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
 
 
 
@@ -49,6 +51,7 @@ const DashBoard = () => {
 
   const [selectedMonth, setSelectedMonth] = useState("");
   const [currentMonthName, setCurrentMonthName] = useState("");
+  const axiosSecure = useAxiosSecure()
 
   // Initialize Current Month
   useEffect(() => {
@@ -213,6 +216,39 @@ const DashBoard = () => {
 
   console.log('total monthly cost dataaaa',totalmonthlyCost);
 
+  // location access
+  const handleLocationClick = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+
+          const locationData = {latitude, longitude}
+
+          axiosSecure.post('api/location', locationData)
+      .then(res=>{
+
+        if(res.data.acknowledged === true)
+          toast.success(`lattitude and longitude add succesfully`)
+        console.log(res.data);
+      
+      })
+      .catch(err=>{
+        console.log(err);
+        toast.error(err.message)
+      }) 
+          
+    },
+        (error) => {
+          console.error('Error getting location:', error);
+        }
+      );
+    } else {
+      alert('Geolocation is not supported by your browser.');
+    }
+  };
+
   return (
     <div className="bg-gray-100 h-screen">
       {/* Header */}
@@ -224,7 +260,10 @@ const DashBoard = () => {
       </div>
 
       {/* Month Selector */}
-      <div className="flex justify-center mt-5">
+      <div className="lg:flex justify-center mt-5">
+      <button className="bg-red-400 text-white rounded mr-4" onClick={handleLocationClick} style={{ padding: '10px 20px', fontSize: '16px' }}>
+        Get Location
+      </button>
         <select
           className="border border-gray-400 p-2 w-60 rounded-lg font-bangla"
           value={selectedMonth}
@@ -409,17 +448,14 @@ const DashBoard = () => {
           </div>
 
          
-
           </div>
 
           {/* total profit dashboard */}
-          <div className="bg-[#74a69a] mt-6 h-44 rounded-3xl">
-            total profit
+          <div className="bg-[#74a69a] p-4 mt-6 h-44 rounded-3xl">
+            TODO: total profit
           </div>
           
         </div>
-
-
       </div>
 
       
