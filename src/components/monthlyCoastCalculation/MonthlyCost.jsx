@@ -218,7 +218,7 @@ console.log('dataaaaa',monthlyCoastData);
               মাস নির্বাচন করুন
             </option>
             <option value="জানুয়ারী">জানুয়ারী</option>
-            <option value="ফেব্রুয়ারি">ফেব্রুয়ারি</option>
+            <option value="ফেব্রুয়ারী">ফেব্রুয়ারী</option>
             <option value="মার্চ">মার্চ</option>
             <option value="এপ্রিল">এপ্রিল</option>
             <option value="মে">মে</option>

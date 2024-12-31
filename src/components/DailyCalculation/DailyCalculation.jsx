@@ -169,6 +169,7 @@ console.log(income_card_int, income_cash_int, cash_expenses_int, nasta_coast_int
   });
 
 
+
   // Compute totals
 const totals = filteredData.reduce(
   (acc, curr) => {
@@ -189,9 +190,6 @@ const totals = filteredData.reduce(
   totals.totalNastaCoast;
 
 
-
-
-
   return (
     <div className="w-11/12 mx-auto mt-10 font-bangla">
       <div className="flex justify-center items-center gap-2">
@@ -201,7 +199,7 @@ const totals = filteredData.reduce(
 
 
       <div className="lg:flex lg:justify-between items-center justify-center justify-items-center mt-10 px-2">
-      <div className="relative flex w-full gap-2 md:w-max mb-3">
+      <div className="relative flex w-full gap-2 md:w-max mb-3 -z-20">
           <Input
             type="search"
             color="blue-gray"
@@ -336,7 +334,7 @@ const totals = filteredData.reduce(
       </Dialog>
 
 
-      <Card className="h-full w-full shadow-none border overflow-auto mt-5 rounded-t-xl mb-10">
+      <Card className="h-full -z-20 w-full shadow-none border overflow-auto mt-5 rounded-t-xl mb-10">
   {filteredData.length === 0 ? (
     // No Data UI
     <div className="text-center p-10">
@@ -346,7 +344,7 @@ const totals = filteredData.reduce(
     </div>
   ) : (
     // Table UI
-    <table className="w-full min-w-max table-auto text-left">
+    <table className="w-full  min-w-max table-auto text-left">
       <thead>
         <tr>
           {TABLE_HEAD.map((head) => (

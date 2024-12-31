@@ -235,7 +235,7 @@ const EmployeeSalary = () => {
 
      <div className="flex items-start gap-10 justify-around">
 
-      <div className="w-full">
+      <div className="w-full mb-5">
       <div className="flex justify-center items-center gap-2 mt-10 mb-2">
         <GoChecklist className="text-3xl" />
         <h2 className="text-2xl text-center font-semibold">বেতন</h2>

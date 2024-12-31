@@ -216,38 +216,43 @@ const DashBoard = () => {
 
   console.log('total monthly cost dataaaa',totalmonthlyCost);
 
-  // location access
-  const handleLocationClick = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+  
 
-          const locationData = {latitude, longitude}
 
-          axiosSecure.post('api/location', locationData)
-      .then(res=>{
 
-        if(res.data.acknowledged === true)
-          toast.success(`lattitude and longitude add succesfully`)
-        console.log(res.data);
-      
-      })
-      .catch(err=>{
-        console.log(err);
-        toast.error(err.message)
-      }) 
-          
+
+// cash card income
+  const [cashIncome, setCashIncome] = useState(0);
+const [cardIncome, setCardIncome] = useState(0);
+
+useEffect(() => {
+  const incomeTotals = filteredData.reduce(
+    (acc, curr) => {
+      acc.cash += curr.income_cash_int || 0; // Add cash income
+      acc.card += curr.income_card_int || 0; // Add card income
+      return acc;
     },
-        (error) => {
-          console.error('Error getting location:', error);
-        }
-      );
-    } else {
-      alert('Geolocation is not supported by your browser.');
-    }
-  };
+    { cash: 0, card: 0 } // Initialize accumulator
+  );
+
+  setCashIncome(incomeTotals.cash);
+  setCardIncome(incomeTotals.card);
+}, [filteredData]);
+
+
+const [totalProfit, setTotalProfit] = useState(0);
+
+  // Calculate the total profit dynamically
+  useEffect(() => {
+    const income = cashIncome + cardIncome;
+    const expenses =
+    totalExpensesValue+
+    totalmonthlyCost+
+    totalCostAmount+
+    totalSalaryCost
+  
+    setTotalProfit(income - expenses);
+  }, [totalExpensesValue, totalmonthlyCost, totalCostAmount, totalSalaryCost, cashIncome, cardIncome]);
 
   return (
     <div className="bg-gray-100 h-screen">
@@ -261,9 +266,7 @@ const DashBoard = () => {
 
       {/* Month Selector */}
       <div className="lg:flex justify-center mt-5">
-      <button className="bg-red-400 text-white rounded mr-4" onClick={handleLocationClick} style={{ padding: '10px 20px', fontSize: '16px' }}>
-        Get Location
-      </button>
+     
         <select
           className="border border-gray-400 p-2 w-60 rounded-lg font-bangla"
           value={selectedMonth}
@@ -410,8 +413,8 @@ const DashBoard = () => {
 
             </div>
 
-            <h2 className="text-4xl font-semibold">
-              30000
+            <h2 className="text-3xl font-semibold">
+            {cashIncome.toLocaleString("bn-BD")} ৳
             </h2>
             </div>
 
@@ -432,8 +435,8 @@ const DashBoard = () => {
 
             </div>
 
-            <h2 className="text-4xl text-white font-semibold">
-              86024
+            <h2 className="text-3xl text-white font-semibold">
+            {cardIncome.toLocaleString("bn-BD")} ৳
             </h2>
             </div>
 
@@ -447,12 +450,23 @@ const DashBoard = () => {
 
           </div>
 
-         
           </div>
 
           {/* total profit dashboard */}
           <div className="bg-[#74a69a] p-4 mt-6 h-44 rounded-3xl">
-            TODO: total profit
+         
+ 
+  {totalProfit !== 0 ? (
+    <p className="text-4xl font-semibold text-white mt-4">
+     Total Profit: {totalProfit.toLocaleString("bn-BD")} ৳
+    </p>
+  ) : (
+    <p className="text-sm font-medium text-red-500 mt-4">
+      No profit data available
+    </p>
+  )}
+
+
           </div>
           
         </div>
