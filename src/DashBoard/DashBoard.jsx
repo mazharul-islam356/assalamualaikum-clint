@@ -265,9 +265,10 @@ const [totalProfit, setTotalProfit] = useState(0);
       </div>
 
       {/* Month Selector */}
-      <div className="lg:flex justify-center mt-5">
+      <div className="lg:flex justify-center items-center justify-items-center mt-5">
      
-        <select
+      <div>
+      <select
           className="border border-gray-400 p-2 w-60 rounded-lg font-bangla"
           value={selectedMonth}
           onChange={(e) => setSelectedMonth(e.target.value)}
@@ -279,6 +280,7 @@ const [totalProfit, setTotalProfit] = useState(0);
             </option>
           ))}
         </select>
+      </div>
       </div>
 
       
@@ -328,7 +330,7 @@ const [totalProfit, setTotalProfit] = useState(0);
                       </p>
                     ) : (
                       <p className="text-sm font-medium text-red-500">
-                        No available data
+                        No data
                       </p>
                     )}</p>
                 </div>
@@ -347,7 +349,7 @@ const [totalProfit, setTotalProfit] = useState(0);
                       </p>
                     ) : (
                       <p className="text-sm font-medium text-red-500">
-                        No available data
+                        No data
                       </p>
                     )}</p>
                 </div>
@@ -366,7 +368,7 @@ const [totalProfit, setTotalProfit] = useState(0);
                       </p>
                     ) : (
                       <p className="text-sm font-medium text-red-500">
-                        No available data
+                        No data
                       </p>
                     )}</p>
                 </div>
@@ -388,7 +390,7 @@ const [totalProfit, setTotalProfit] = useState(0);
                       </p>
                     ) : (
                       <p className="text-sm font-medium text-red-500">
-                        No available data
+                        No data
                       </p>
                     )}</p>
                 </div>

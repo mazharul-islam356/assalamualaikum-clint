@@ -199,7 +199,7 @@ const totals = filteredData.reduce(
 
 
       <div className="lg:flex lg:justify-between items-center justify-center justify-items-center mt-10 px-2">
-      <div className="relative flex w-full gap-2 md:w-max mb-3 -z-20">
+      <div className="relative flex w-full gap-2 md:w-max mb-3">
           <Input
             type="search"
             color="blue-gray"
@@ -334,7 +334,7 @@ const totals = filteredData.reduce(
       </Dialog>
 
 
-      <Card className="h-full -z-20 w-full shadow-none border overflow-auto mt-5 rounded-t-xl mb-10">
+      <Card className="h-full w-full shadow-none border overflow-auto mt-5 rounded-t-xl mb-10">
   {filteredData.length === 0 ? (
     // No Data UI
     <div className="text-center p-10">

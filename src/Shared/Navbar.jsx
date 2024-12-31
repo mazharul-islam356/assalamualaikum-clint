@@ -22,6 +22,9 @@ import {
   Bars3Icon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { MdDashboard } from "react-icons/md";
+import { FaCalculator, FaFileInvoiceDollar } from "react-icons/fa6";
+import { GrMoney } from "react-icons/gr";
 
 const Navbar = () => {
     const [prevScrollPos, setPrevScrollPos] = useState(0)
@@ -104,7 +107,7 @@ const Navbar = () => {
            <Link to='/'>
            <ListItem>
               <ListItemPrefix>
-                <UserCircleIcon className="h-5 w-5" />
+                <MdDashboard className="h-5 w-5" />
               </ListItemPrefix>
               ড্যাশবোর্ড
             </ListItem>
@@ -113,7 +116,7 @@ const Navbar = () => {
            <Link to='/daily-calculation'>
            <ListItem>
               <ListItemPrefix>
-                <UserCircleIcon className="h-5 w-5" />
+                <FaCalculator  className="h-5 w-5" />
               </ListItemPrefix>
               দৈনিক হিসাব
             </ListItem>
@@ -122,7 +125,7 @@ const Navbar = () => {
             <Link to='/monthly-cost'>
             <ListItem>
               <ListItemPrefix>
-                <Cog6ToothIcon className="h-5 w-5" />
+                <GrMoney className="h-5 w-5" />
               </ListItemPrefix>
                মাসিক এককালীন  খরচ
             </ListItem>
@@ -131,7 +134,7 @@ const Navbar = () => {
           <Link to='/employee-salary'>
           <ListItem>
               <ListItemPrefix>
-                <PowerIcon className="h-5 w-5" />
+                <FaFileInvoiceDollar className="h-5 w-5" />
               </ListItemPrefix>
               বেতন
             </ListItem>

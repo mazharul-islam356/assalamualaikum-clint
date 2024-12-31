@@ -82,7 +82,7 @@ const EmployeeSalary = () => {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-3 justify-center items-center justify-items-center mt-8">
+        <div className="grid lg:grid-cols-3 justify-center items-center justify-items-center mt-8 gap-4 lg:gap-0">
           {/* month select */}
           <div className="w-64">
             <Typography className="mb-1 mt-4 font-bangla" variant="h6">
@@ -118,7 +118,7 @@ const EmployeeSalary = () => {
           {/* name select */}
           <div className="w-64">
             <Typography className="mb-1 mt-4 font-bangla" variant="h6">
-              Name নির্বাচন করুন:
+            নাম নির্বাচন করুন:
             </Typography>
             <select
               name="employee_name"
@@ -151,7 +151,7 @@ const EmployeeSalary = () => {
 
         <div className="flex justify-center items-center mt-8">
           <button className="bg-[#219ebc] w-full text-white px-8 py-1 rounded-md font-semibold">
-            Add
+          বেতন যুক্ত করুন
           </button>
         </div>
       </form>
@@ -162,7 +162,7 @@ const EmployeeSalary = () => {
         <GrMoney   className="text-2xl"></GrMoney>
         <h3 className="font-semibold text-2xl ">আনুষঙ্গিক খরচ</h3>
       </div>
-        <div className="grid grid-cols-3 justify-center items-center justify-items-center mt-8">
+        <div className="grid gap-4 lg:gap-0 lg:grid-cols-3 justify-center items-center justify-items-center mt-8">
 
           {/* month select */}
           <div className="w-64">
@@ -227,13 +227,13 @@ const EmployeeSalary = () => {
 
         <div className="flex w-full justify-center items-center mt-8">
           <button className="bg-blue-500 w-full text-white px-8 py-1 rounded-md font-semibold">
-            Add2
+          আনুষঙ্গিক খরচ যুক্ত করুন
           </button>
         </div>
       </form>
       <hr className="mt-5" />
 
-     <div className="flex items-start gap-10 justify-around">
+     <div className="lg:flex items-start gap-10 justify-around">
 
       <div className="w-full mb-5">
       <div className="flex justify-center items-center gap-2 mt-10 mb-2">

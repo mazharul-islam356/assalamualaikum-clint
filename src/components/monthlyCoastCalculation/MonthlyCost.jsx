@@ -243,19 +243,19 @@ console.log('dataaaaa',monthlyCoastData);
           {inputPairs.map((pair) => (
           <div key={pair.id} className="lg:flex items-center lg:space-x-2 space-y-3 mb-2 gap-5">
 
-           <div className="flex items-center gap-1">
+           <div className="flex items-center gap-1 mt-3">
            <Typography
                   htmlFor={`product-${pair.id}`}
                   className="font-bangla text-lg font-semibold"
                 >
-                  পণ্য:
+                  দোকানদার:
                 </Typography>
             <Input
               type="text"
               required
               value={pair.product}
               onChange={(e) => handleInputChange(pair.id, "product", e.target.value)}
-              label="পণ্যের নাম"
+              label="দোকানদারের নাম"
               className="flex-grow"
             />
            </div>
@@ -296,7 +296,7 @@ console.log('dataaaaa',monthlyCoastData);
           + পণ্য যুক্ত করুন
         </Button>
 
-        <div> <strong>Total: ${total.toFixed(2)}</strong></div>
+        <div> <strong>Total:{total.toFixed(2)}</strong></div>
         </div>
 
       </div>
@@ -304,7 +304,7 @@ console.log('dataaaaa',monthlyCoastData);
         <div className="flex mt-10 w-11/12 mx-auto justify-center items-center">
           <button type="submit" className="custom-btn btn-12">
             <span>Click!</span>
-            <span>Add</span>
+            <span>যুক্ত করুন</span>
           </button>
         </div>
       </form>
@@ -320,7 +320,7 @@ console.log('dataaaaa',monthlyCoastData);
           <h2 className="text-2xl text-center font-semibold">লিস্ট</h2>
         </div>
         <Card className="h-full mt-8 w-full overflow-auto">
-          <table className="w-full min-w-max table-auto text-left mb-10">
+          <table className="w-full min-w-max table-auto text-left">
             <thead>
               <tr>
                 {TABLE_HEAD.map((head) => (
@@ -414,7 +414,7 @@ console.log('dataaaaa',monthlyCoastData);
 
          
 <div className="flex gap-3 text-gray-800 font-semibold">
-           <h4 className="text-xl">পন্যের নাম:</h4>
+           <h4 className="text-xl">দোকানদারের নাম:</h4>
            <ol>
             {products.map((item,idx)=>(
               <div key={item._id} className="flex gap-1 text-gray-700">
